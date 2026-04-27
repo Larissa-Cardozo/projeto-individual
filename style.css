@@ -1,0 +1,357 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: "Telex", "Open Sans", sans-serif;
+    color: #f6fbff;
+    background:
+        radial-gradient(circle at top, rgba(255, 203, 5, 0.15), transparent 32%),
+        linear-gradient(180deg, #10233F 0%, #0B1830 45%, #091322 100%);
+}
+
+a {
+    text-decoration: none;
+}
+
+h1, h2, h3, h4, .botao, .navbar a {
+    font-family: "Press Start 2P";
+    text-align: center;
+}
+
+h1, h2, h3, h4 {
+    color: #fff4b8;
+    line-height: 1.4;
+    text-shadow: 0 0 18px rgba(255, 203, 5, 0.15);
+}
+
+p, li {
+    color: #ffffff;
+    line-height: 1.7;
+    font-size: 18px;
+}
+
+.navbar {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 20px 5%;
+    background: #071121a8;
+}
+
+.navbar h1 {
+    font-size: 24px;
+}
+
+.navbar ul {
+    display: flex;
+    justify-content: center;
+    list-style: none;
+    gap: 14px;
+}
+
+.navbar ul a {
+    font-size: 13px;
+    border-radius: 20px;
+    color: #dce9ff;
+    padding: 8px 10px;
+}
+
+.navbar ul a:hover {
+    color: #fff4b8;
+    background: #ffcb0514;
+}
+.botao {
+    padding: 14px 18px;
+    background: #ffcd05af;
+    border: 1px solid #f0ffae8f;
+    border-radius: 10px;
+    font-size: 11px;
+    color: #000000;
+    cursor: pointer;
+    transition: 0.5s;
+}
+
+.botaoC {
+    background: linear-gradient(135deg, #7ddcff38, #ffcb0538), #ffffff0d;
+}
+
+.botaoC a {
+    color: #f6fbff;
+}
+
+.botao:hover {
+    transform: translateY(-4px);
+}
+
+.container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 35px;
+    padding: 0 3%;
+    align-items: center;
+}
+
+.regiao, .cardPoke, .cardCuri{
+    border: 1px solid #7caaff2e;
+    border-radius: 28px;
+    background:
+        radial-gradient(circle at bottom, rgba(255, 205, 5, 0.16), transparent 60%),
+        linear-gradient(180deg, #10233F 0%, #0B1830 45%, #091322 100%);
+    box-shadow: 0 22px 60px rgba(1, 8, 19, 0.45);
+}
+
+.hero {
+    background-size: cover;
+    height: 600px;
+    display: flex;
+    align-items: center;
+    background-image: linear-gradient(rgba(8,17,34,0.6), rgba(8, 17, 34, 0.349)), url("./assets/backHero.jpg");
+    background-position: center;
+}
+
+.conteudo {
+    width: 70%;
+    padding-left: 20px;
+}
+
+.hero h2 {
+    width: 70%;
+    font-size: 30px;
+    text-align: left;
+    margin-bottom: 18px;
+}
+
+.hero p {
+    width: 60%;
+    font-size: 18px;
+}
+
+.regiao, .ferramenta {
+    width: 100%;
+    padding: 36px;
+}
+
+.regiao h2, .curiosidades h2, .ferramenta h2 {
+    margin-bottom: 18px;
+    font-size: 24px;
+}
+
+.sobre {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 30px 20px;
+}
+
+.sobre h2 {
+    width: 34%;
+    margin: 0;
+    padding-right: 24px;
+    border-right: 3px solid rgba(255, 203, 5, 0.7);
+    font-size: 26px;
+    text-align: left;
+}
+
+.sobre p {
+    width: 60%;
+    padding: 0 0 0 8px;
+    border: none;
+    background: none;
+    font-size: 20px;
+}
+
+.iniciais, .curiosidades {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 24px;
+}
+
+.iniciais h3, .curiosidades h2 {
+    width: 100%;
+    padding: 0 6px;
+}
+
+.iniciais h3 {
+    font-size: 22px;
+    line-height: 1.5;
+    margin-bottom: 6px;
+}
+
+.curiosidadesCarrossel {
+    width: 100%;
+    overflow: hidden;
+}
+
+.curiosidadesTrack {
+    display: flex;
+    width: 600%;
+    animation: passarCuriosidades 20s infinite;
+}
+
+.curiosidadesTrack .cardCuri {
+    width: 100%;
+    padding: 32px 24px;
+}
+
+@keyframes passarCuriosidades {
+    0%,
+    12% {
+        transform: translateX(0);
+    }
+    16%,
+    28% {
+        transform: translateX(-16.7%);
+    }
+    32%,
+    44% {
+        transform: translateX(-33.4%);
+    }
+    48%,
+    60% {
+        transform: translateX(-50%);
+    }
+    64%,
+    76% {
+        transform: translateX(-66.7%);
+    }
+    80%,
+    92% {
+        transform: translateX(-83.4%);
+    }
+    100% {
+        transform: translateX(0);
+    }
+}
+
+.cardPoke, .cardCuri {
+    max-width: 31%;
+    padding: 28px 22px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 14px;
+}
+
+.poke {
+    width: 170px;
+    height: 170px;
+    margin: 0 auto 6px;
+}
+
+.cardPoke h2 {
+    font-size: 20px;
+}
+
+.cardPoke h4, .cardCuri h4 {
+    font-size: 15px;
+}
+
+.tipo {
+    width: 52px;
+    height: 52px;
+    padding: 5px;
+    border-radius: 50%;
+    background: #ffffff14;
+}
+
+.icon {
+    width: 82px;
+    height: 82px;
+    border-radius: 20px;
+    padding: 12px;
+    background: #ffffff10;
+    object-fit: contain;
+}
+
+.regiao {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+.regiao h2, .regiao p {
+    width: 100%;
+}
+
+.mapa {
+    width: 58%;
+    border-radius: 20px;
+    border: 2px solid #7caaff2e;
+}
+
+.cardPontosCid {
+    width: 40%;
+    padding: 24px;
+    text-align: center;
+}
+
+.cardPontosCid h3 {
+    font-size: 18px;
+    margin-bottom: 16px;
+}
+
+.cardPontosCid ul {
+    padding-left: 20px;
+}
+
+.cardPontosCid li {
+    margin-bottom: 12px;
+    border-radius: 2px;
+    padding: 5px;
+    list-style: none;
+}
+
+li:hover{
+    transform: translate(4px, 4px);
+    color: #ffff48;
+}
+
+.ferramenta {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    border: 1px solid #ffcd05b6;
+    box-shadow: 0 0 18px rgba(255, 203, 5, 0.18);
+    background:
+        radial-gradient(circle, rgba(255, 203, 5, 0.2), transparent 54%),
+        linear-gradient(180deg, rgba(28, 58, 98, 0.95), rgba(8, 17, 34, 0.98));
+}
+
+.seloFerramenta {
+    background-color: #ffcb05;
+    color: #10233F;
+    padding: 10px 18px;
+    border-radius: 30px;
+    font-size: 18px;
+}
+
+.ferramenta .botao {
+    font-size: 13px;
+    border: 2px solid #ffcb05;  
+}
+
+.ferramenta .botao:hover {
+    box-shadow: 0 0 24px rgba(255, 203, 5, 0.38);
+}
+
+footer {
+    margin: 40px 0;
+    text-align: center;
+}

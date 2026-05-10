@@ -3,38 +3,28 @@
     margin: 0;
     padding: 0;
 }
-
-html {
-    scroll-behavior: smooth;
-}
-
 body {
     font-family: "Telex", "Open Sans", sans-serif;
     color: #f6fbff;
     background:
-        radial-gradient(circle at top, rgba(255, 203, 5, 0.15), transparent 32%),
+        radial-gradient(circle at top, #ffcb0526, transparent 32%),
         linear-gradient(180deg, #10233F 0%, #0B1830 45%, #091322 100%);
 }
 
 a {
     text-decoration: none;
 }
-
 h1, h2, h3, h4, .botao, .navbar a {
     font-family: "Press Start 2P";
     text-align: center;
 }
-
 h1, h2, h3, h4 {
     color: #fff4b8;
     line-height: 1.4;
-    text-shadow: 0 0 18px rgba(255, 203, 5, 0.15);
 }
-
 p, li {
     color: #ffffff;
     line-height: 1.7;
-    font-size: 18px;
 }
 
 .navbar {
@@ -43,51 +33,40 @@ p, li {
     align-items: center;
     justify-content: space-between;
     gap: 18px;
-    padding: 20px 5%;
+    padding: 2% 5%;
     background: #071121a8;
 }
-
 .navbar h1 {
-    font-size: 24px;
+    font-size: 28px;
 }
-
 .navbar ul {
     display: flex;
     justify-content: center;
     list-style: none;
     gap: 14px;
 }
-
 .navbar ul a {
-    font-size: 13px;
-    border-radius: 20px;
+    font-size: 18px;
     color: #dce9ff;
-    padding: 8px 10px;
+    padding: 0 10px;
 }
 
-.navbar ul a:hover {
-    color: #fff4b8;
-    background: #ffcb0514;
-}
 .botao {
     padding: 14px 18px;
     background: #ffcd05af;
     border: 1px solid #f0ffae8f;
     border-radius: 10px;
-    font-size: 11px;
-    color: #000000;
-    cursor: pointer;
-    transition: 0.5s;
+    font-size: 15px;
 }
-
+.botao a{
+    color: #070606cc;
+}
 .botaoC {
-    background: linear-gradient(135deg, #7ddcff38, #ffcb0538), #ffffff0d;
+    background: linear-gradient( #012633, #ffcb0538);
 }
-
 .botaoC a {
     color: #f6fbff;
 }
-
 .botao:hover {
     transform: translateY(-4px);
 }
@@ -100,50 +79,45 @@ p, li {
     padding: 0 3%;
     align-items: center;
 }
-
-.regiao, .cardPoke, .cardCuri{
-    border: 1px solid #7caaff2e;
-    border-radius: 28px;
-    background:
-        radial-gradient(circle at bottom, rgba(255, 205, 5, 0.16), transparent 60%),
-        linear-gradient(180deg, #10233F 0%, #0B1830 45%, #091322 100%);
-    box-shadow: 0 22px 60px rgba(1, 8, 19, 0.45);
-}
-
 .hero {
     background-size: cover;
-    height: 600px;
+    height: 700px;
     display: flex;
     align-items: center;
-    background-image: linear-gradient(rgba(8,17,34,0.6), rgba(8, 17, 34, 0.349)), url("./assets/backHero.jpg");
-    background-position: center;
+    background-image: linear-gradient(#08112299, #08112259), url("./assets/backHero.jpg");
+    background-position: 35px;
 }
-
 .conteudo {
-    width: 70%;
-    padding-left: 20px;
+    width: 75%;
+    padding-left: 50px;
 }
-
 .hero h2 {
     width: 70%;
-    font-size: 30px;
+    font-size: 38px;
     text-align: left;
-    margin-bottom: 18px;
+    margin-bottom: 28px;
 }
-
 .hero p {
     width: 60%;
-    font-size: 18px;
+    font-size: 25px;
+}
+
+.regiao, .cardPoke{
+    border: 1px solid #7caaff5d;
+    border-radius: 28px;
+    background:
+        radial-gradient(circle at top, #ffcd0556, transparent 70%),
+        #0b3353bb;
+}
+.regiao{
+    background:
+        radial-gradient(circle at right, #ffcd053f, transparent 50%),
+        #0b3353bb;
 }
 
 .regiao, .ferramenta {
     width: 100%;
     padding: 36px;
-}
-
-.regiao h2, .curiosidades h2, .ferramenta h2 {
-    margin-bottom: 18px;
-    font-size: 24px;
 }
 
 .sobre {
@@ -153,59 +127,133 @@ p, li {
     align-items: center;
     padding: 30px 20px;
 }
-
 .sobre h2 {
-    width: 34%;
-    margin: 0;
-    padding-right: 24px;
-    border-right: 3px solid rgba(255, 203, 5, 0.7);
+    width: 30%;
+    border-right: 2px solid #ffcb05b3;
     font-size: 26px;
     text-align: left;
 }
-
 .sobre p {
-    width: 60%;
-    padding: 0 0 0 8px;
-    border: none;
-    background: none;
-    font-size: 20px;
+    width: 65%;
+    font-size: 25px;
 }
 
 .iniciais, .curiosidades {
-    width: 100%;
+    width: 95%;
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 24px;
+    flex-direction: row;
+    gap: 30px;
 }
-
-.iniciais h3, .curiosidades h2 {
-    width: 100%;
-    padding: 0 6px;
-}
-
-.iniciais h3 {
+.tituloIniciais{
     font-size: 22px;
-    line-height: 1.5;
-    margin-bottom: 6px;
+    margin-bottom: 10px;
 }
 
+.cardPoke, .cardCuri {
+    padding: 28px 22px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 20px;
+}
+.poke {
+    width: 190px;
+    height: 200px;
+}
+.cardPoke h2 {
+    font-size: 25px;
+}
+.cardPoke h4, .cardCuri h4 {
+    font-size: 20px;
+}
+.tipo {
+    width: 62px;
+    height: 62px;
+    padding: 5px;
+    border-radius: 50%;
+    background: #ffffff54;
+}
+.cardPoke p{
+    font-size: 22px;
+}
+
+.regiao {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 20px;
+}
+.tituloRegiao{
+    font-size: 25px;
+    text-align: center;
+}
+.tituloRegiao p{
+    font-size: 20px;
+}
+
+.mapa {
+    width: 55%;
+    border-radius: 20px;
+}
+.cardPontosCid {
+    width: 50%;
+    padding: 24px;
+    text-align: center;
+}
+
+.cardPontosCid h3 {
+    font-size: 25px;
+    margin-bottom: 16px;
+}
+.cardPontosCid ul{
+    width: 90%;
+    margin-left: 5%;
+}
+.cardPontosCid li {
+    margin-bottom: 12px;
+    border-radius: 2px;
+    list-style: none;
+    padding: 5px;
+    font-size: 25px;
+}
+li:hover{
+    color: #ffff48;
+}
+
+
+.icon {
+    width: 100px;
+    height: 100px;
+    border-radius: 20px;
+    padding: 12px;
+    background: #ffffff46;
+    object-fit: contain;
+}
+.curiosidades{
+    align-items: center;
+}
+.curiosidades h2{
+    text-align: left;
+    font-size: 25px;
+    width:80%
+}
+.cardCuri p{
+    font-size: 20px;
+    width: 80%;
+}
 .curiosidadesCarrossel {
     width: 100%;
     overflow: hidden;
 }
-
 .curiosidadesTrack {
     display: flex;
     width: 600%;
-    animation: passarCuriosidades 20s infinite;
+    animation: passarCuriosidades 15s infinite;
 }
-
 .curiosidadesTrack .cardCuri {
     width: 100%;
-    padding: 32px 24px;
 }
-
 @keyframes passarCuriosidades {
     0%,
     12% {
@@ -236,91 +284,6 @@ p, li {
     }
 }
 
-.cardPoke, .cardCuri {
-    max-width: 31%;
-    padding: 28px 22px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 14px;
-}
-
-.poke {
-    width: 170px;
-    height: 170px;
-    margin: 0 auto 6px;
-}
-
-.cardPoke h2 {
-    font-size: 20px;
-}
-
-.cardPoke h4, .cardCuri h4 {
-    font-size: 15px;
-}
-
-.tipo {
-    width: 52px;
-    height: 52px;
-    padding: 5px;
-    border-radius: 50%;
-    background: #ffffff14;
-}
-
-.icon {
-    width: 82px;
-    height: 82px;
-    border-radius: 20px;
-    padding: 12px;
-    background: #ffffff10;
-    object-fit: contain;
-}
-
-.regiao {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-start;
-    gap: 20px;
-}
-
-.regiao h2, .regiao p {
-    width: 100%;
-}
-
-.mapa {
-    width: 58%;
-    border-radius: 20px;
-    border: 2px solid #7caaff2e;
-}
-
-.cardPontosCid {
-    width: 40%;
-    padding: 24px;
-    text-align: center;
-}
-
-.cardPontosCid h3 {
-    font-size: 18px;
-    margin-bottom: 16px;
-}
-
-.cardPontosCid ul {
-    padding-left: 20px;
-}
-
-.cardPontosCid li {
-    margin-bottom: 12px;
-    border-radius: 2px;
-    padding: 5px;
-    list-style: none;
-}
-
-li:hover{
-    transform: translate(4px, 4px);
-    color: #ffff48;
-}
-
 .ferramenta {
     text-align: center;
     display: flex;
@@ -333,7 +296,6 @@ li:hover{
         radial-gradient(circle, rgba(255, 203, 5, 0.2), transparent 54%),
         linear-gradient(180deg, rgba(28, 58, 98, 0.95), rgba(8, 17, 34, 0.98));
 }
-
 .seloFerramenta {
     background-color: #ffcb05;
     color: #10233F;
@@ -341,16 +303,9 @@ li:hover{
     border-radius: 30px;
     font-size: 18px;
 }
-
-.ferramenta .botao {
-    font-size: 13px;
-    border: 2px solid #ffcb05;  
-}
-
 .ferramenta .botao:hover {
     box-shadow: 0 0 24px rgba(255, 203, 5, 0.38);
 }
-
 footer {
     margin: 40px 0;
     text-align: center;

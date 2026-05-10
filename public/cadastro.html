@@ -24,25 +24,115 @@
 
         <div class="direito">
             <h2>CADASTRO</h2>
-
+             <div class="alerta_erro">
+                <div class="card_erro" id="cardErro">
+                    <span id="mensagem_erro"></span>
+                </div>
+            </div>
             <div class="forms">
                 <div class="inputs">
-                    <label for="inputNome">Insira aqui seu nome:</label>
-                    <input type="text" id="inputNome">
+                    <label for="ipt_nome">Insira aqui seu nome:</label>
+                    <input type="text" id="ipt_nome">
 
-                    <label for="inputEmail">Insira aqui seu email:</label>
-                    <input type="text" id="inputEmail">
+                    <label for="ipt_email">Insira aqui seu email:</label>
+                    <input type="text" id="ipt_email">
 
-                    <label for="inputSenha">Insira aqui sua senha:</label>
-                    <input type="text" id="inputSenha">
+                    <label for="ipt_senha">Insira aqui sua senha:</label>
+                    <input type="password" id="ipt_senha">
 
-                    <label for="inputConfirmacao">Confirme sua senha:</label>
-                    <input type="text" id="inputConfirmacao">
+                    <label for="ipt_confirmacao">Confirme sua senha:</label>
+                    <input type="password" id="ipt_confirmacao">
                 </div>
 
-                <button class="botao">Entrar</button>
+                <button class="botao" onclick="cadastrar()">Entrar</button>
             </div>
         </div>
     </div>
 </body>
 </html>
+
+<script>
+
+  function cadastrar() {
+    // aguardar();
+
+    //Recupere o valor da nova input pelo nome do id
+    // Agora vá para o método fetch logo abaixo
+    var nomeVar = ipt_nome.value;
+    var emailVar = ipt_email.value;
+    var senhaVar = ipt_senha.value;
+    var confirmacaoSenhaVar = ipt_confirmacao.value;
+
+    // Verificando se há algum campo em branco
+    if (
+      nomeVar == "" ||
+      emailVar == "" ||
+      senhaVar == "" ||
+      confirmacaoSenhaVar == ""
+    ) {
+      cardErro.style.display = "block";
+      mensagem_erro.innerHTML =
+        "(Mensagem de erro para todos os campos em branco)";
+
+      finalizarAguardar();
+      return false;
+    } else{
+       if(!emailVar.includes('@') || !emailVar.includes('.')){
+            cardErro.style.display = "block";
+            mensagem_erro.innerHTML =
+            "Email Inválido";
+            finalizarAguardar();
+            return false;
+        }else if(senhaInserida !== confirmacao){
+            cardErro.style.display = "block";
+            mensagem_erro.innerHTML =
+            "Senhas Divergentes";
+            finalizarAguardar();
+            return false;
+        }else{
+             // Enviando o valor da nova input
+            fetch("/usuarios/cadastrar", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                // crie um atributo que recebe o valor recuperado aqui
+                // Agora vá para o arquivo routes/usuario.js
+                nomeServer: nomeVar,
+                emailServer: emailVar,
+                senhaServer: senhaVar,
+                confirmacaoServer: confirmacaoSenhaVar
+            }),
+            })
+            .then(function (resposta) {
+                console.log("resposta: ", resposta);
+
+                if (resposta.ok) {
+                cardErro.style.display = "block";
+
+                mensagem_erro.innerHTML =
+                    "Cadastro realizado com sucesso! Redirecionando para tela de Login...";
+
+                setTimeout(() => {
+                    window.location = "login.html";
+                }, "2000");
+
+                limparFormulario();
+                finalizarAguardar();
+                } else {
+                throw "Houve um erro ao tentar realizar o cadastro!";
+                }
+            })
+            .catch(function (resposta) {
+                console.log(`#ERRO: ${resposta}`);
+                finalizarAguardar();
+            });
+
+            return false;
+        }
+                }
+    }
+
+   
+</script>

@@ -24,11 +24,7 @@
 
         <div class="direito">
             <h2>CADASTRO</h2>
-             <div class="alerta_erro">
-                <div class="card_erro" id="cardErro">
-                    <span id="mensagem_erro"></span>
-                </div>
-            </div>
+             <div id="exibir"></div>
             <div class="forms">
                 <div class="inputs">
                     <label for="ipt_nome">Insira aqui seu nome:</label>
@@ -63,6 +59,7 @@
     var senhaVar = ipt_senha.value;
     var confirmacaoSenhaVar = ipt_confirmacao.value;
 
+    let mensagem = ""
     // Verificando se há algum campo em branco
     if (
       nomeVar == "" ||
@@ -70,23 +67,21 @@
       senhaVar == "" ||
       confirmacaoSenhaVar == ""
     ) {
-      cardErro.style.display = "block";
-      mensagem_erro.innerHTML =
-        "(Mensagem de erro para todos os campos em branco)";
+      mensagem = `<p class="exibir erro">Todos os campos devem ser prenchidos</p>`;
+      exibir.innerHTML = mensagem;;
 
       finalizarAguardar();
       return false;
-    } else{
-       if(!emailVar.includes('@') || !emailVar.includes('.')){
-            cardErro.style.display = "block";
-            mensagem_erro.innerHTML =
-            "Email Inválido";
+    } else if(!emailVar.includes('@') || !emailVar.includes('.')){
+            mensagem = `<p class="exibir erro">Email inválido</p>`;
+            exibir.innerHTML = mensagem;
+
             finalizarAguardar();
             return false;
-        }else if(senhaInserida !== confirmacao){
-            cardErro.style.display = "block";
-            mensagem_erro.innerHTML =
-            "Senhas Divergentes";
+        }else if(senhaVar !== confirmacaoSenhaVar){
+             mensagem = `<p class="exibir erro">Senhas Divergentes</p>`;
+            exibir.innerHTML = mensagem;
+
             finalizarAguardar();
             return false;
         }else{
@@ -109,10 +104,8 @@
                 console.log("resposta: ", resposta);
 
                 if (resposta.ok) {
-                cardErro.style.display = "block";
-
-                mensagem_erro.innerHTML =
-                    "Cadastro realizado com sucesso! Redirecionando para tela de Login...";
+                 mensagem = `<p class="exibir sucesso">Cadastro realizado com sucesso!</p>`;
+                exibir.innerHTML = mensagem;
 
                 setTimeout(() => {
                     window.location = "login.html";
@@ -131,7 +124,7 @@
 
             return false;
         }
-                }
+        
     }
 
    

@@ -35,11 +35,7 @@
                 </div>
                 <button class="botao" onclick="entrar()">Entrar</button>
             </div>
-            <div class="alerta_erro">
-                <div class="card_erro" id="card_erro">
-                    <span id="mensagem_erro"></span>
-                </div>
-            </div>
+            <div id="exibir" class="exibir"></div>
         </div>
     </div>
 </body>
@@ -53,14 +49,15 @@
     }
 
     function entrar(){
-          aguardar();
+          //aguardar();
 
-        var emailVar = email_input.value;
-        var senhaVar = senha_input.value;
-
+        var emailVar = ipt_email.value;
+        var senhaVar = ipt_senha.value;
+        let mensagem = ""
+        
         if (emailVar == "" || senhaVar == "") {
-            cardErro.style.display = "block"
-            mensagem_erro.innerHTML = "(Mensagem de erro para todos os campos em branco)";
+            mensagem += `<p class="exibir erro">Todos os campos devem ser preenchidos</p>`;
+            exibir.innerHTML = mensagem;
             finalizarAguardar();
             return false;
         }
@@ -118,7 +115,7 @@
     }
 
     function sumirMensagem() {
-        cardErro.style.display = "none"
+        exibir.style.display = "none"
     }
 
 </script>

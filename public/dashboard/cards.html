@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,397 +10,76 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Telex&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
-
 </head>
-<body data-page="dashboard">
-    <div class="dashboard-shell">
+<body>
+    <div class="layout-dashboard">
         <aside class="sidebar">
             <div class="sidebar-topo">
+                <span class="sidebar-label">Treinador:</span>
+                <span class="sidebar-nome">Larissa</span>
+
                 <p class="sidebar-descricao">Acompanhe aqui seu progresso!</p>
             </div>
 
             <nav class="sidebar-nav">
-                <a id="linkDashboard" href="cards.html" class="nav-link ativo">Visao geral</a>
-                <a id="linkProjeto" href="projeto.html" class="nav-link">Atualizar progresso</a>
-                <a href="../index.html" class="nav-link ">Voltar ao site</a>
+                <a href="cards.html" class="nav-link ativo">Visão geral</a>
+                <a href="projeto.html" class="nav-link">Atualizar progresso</a>
+                <a href="../index.html" class="nav-link">Voltar ao site</a>
             </nav>
-
-            <div class="sidebar-rodape">
-                <span class="sidebar-label">Treinador</span>
-                <strong id="nomeTreinadorSidebar">Treinador</strong>
-            </div>
         </aside>
 
         <main class="conteudo-principal">
-            <header class="cabecalho-pagina">
+            <div class="cabecalho-pagina">
                 <div class="cabecalho-texto">
-                    <span class="selo">Painel principal</span>
                     <h1>Dashboard de progresso em Kanto</h1>
-                    <p>Veja o percentual geral, acompanhe as KPIs principais e use os graficos para entender onde sua jornada esta mais avancada.</p>
+                    <p>Veja aqui seu progresso no jogo </p>
                 </div>
 
-                <section class="hero-resumo hero-resumo-destaque">
-                    <span>Conclusao geral</span>
-                    <strong id="percentualConclusao">0%</strong>
-                    <div class="barra-progresso">
-                        <div id="barraConclusao"></div>
-                    </div>
-                    <small>Calculo baseado em starter escolhido, ginasios e capturas registradas.</small>
-                </section>
-            </header>
+                <div class="card-p">
+                    <p>Conclusão geral</p>
 
-            <section class="metricas">
-                <article class="card-metrica">
-                    <span class="metrica-titulo">Starter</span>
-                    <strong id="starterAtual">Nao definido</strong>
-                    <p>Seu ponto de partida em Kanto.</p>
-                </article>
+                    <span class="porcentagem">48%</span>
 
-                <article class="card-metrica">
-                    <span class="metrica-titulo">Ginasios vencidos</span>
-                    <strong id="ginasiosVencidos">0/8</strong>
-                    <p>Insignias ja conquistadas na campanha.</p>
-                </article>
+                </div>
 
-                <article class="card-metrica">
-                    <span class="metrica-titulo">Capturas</span>
-                    <strong id="capturasTotais">0</strong>
-                    <p>Pokemon ja registrados por voce.</p>
-                </article>
+            </div>
 
-                <article class="card-metrica">
-                    <span class="metrica-titulo">Tipo dominante</span>
-                    <strong id="tipoDominante">Sem time</strong>
-                    <p>Tipo mais presente no seu time atual.</p>
-                </article>
-            </section>
+            <div class="metricas">
+                <div class="card-metrica">
+                    <h3>Inicial</h3>
+                    <p>Bulbassauro</p>
+                </div>
 
-            <section class="graficos-grid">
-                <article class="painel painel-grafico">
-                    <div class="painel-topo">
-                        <span class="painel-tag">Grafico 1</span>
-                        <h3>Distribuicao do progresso</h3>
-                        <p>Entenda o peso de cada frente no seu percentual geral.</p>
-                    </div>
+                <div class="card-metrica">
+                    <h3>Ginásios vencidos</h3>
+                    <p>3/8</p>
+                </div>
 
-                    <div class="grafico-canvas-wrapper">
-                        <canvas id="graficoProgresso"></canvas>
-                    </div>
-                </article>
+                <div class="card-metrica">
+                    <h3>Capturas</h3>
+                    <p>8</p>
+                </div>
 
-                <article class="painel painel-grafico">
-                    <div class="painel-topo">
-                        <span class="painel-tag">Grafico 2</span>
-                        <h3>Tipos do time principal</h3>
-                        <p>Visualize a composicao do seu time registrado sem precisar entrar no formulario.</p>
-                    </div>
+                <div class="card-metrica">
+                    <h3>Tipo dominante</h3>
+                    <p>Grama</p>
+                </div>
 
-                    <div class="grafico-canvas-wrapper">
-                        <canvas id="graficoTipos"></canvas>
-                    </div>
-                </article>
-            </section>
+            </div>
+
+            <div class="graficos-grid">
+                <div class="painel">
+                    <h2>Gráfico de progresso</h2>
+                    <canvas id="graficoProgresso"></canvas>
+                </div>
+
+                <div class="painel">
+                    <h2>Tipos do time</h2>
+                    <canvas id="graficoTipos"></canvas>
+                </div>
+            </div>
         </main>
+
     </div>
-
-    <script>
-        const colors = ["#3B82F6", "#10B981", "#F59E0B", "#EF4444", "#8B5CF6", "#14B8A6", "#353538"];
-        const colorspizza = ["#00123d", "#0656be", "#0cb2ff"];
-        const colorssemana = ["#3a2749", "#006a85", "#6c00f8", "#5dd6e6", "#0f2c8f", "#6e8499", "#0d1529"];
-        const chaveStorageBase = "pokegreen-dashboard";
-        const totalPokemonsKanto = 151;
-
-        const dashboardPadrao = {
-            usuario: {
-                id: 1,
-                nome: "Treinador"
-            },
-            resumo: {
-                starter: "Bulbasaur",
-                percentualConclusao: 48,
-                ginasiosVencidos: 3,
-                totalGinasios: 8,
-                pokemonsCapturados: 8,
-                metaCapturas: 151,
-                tipoMaisPresente: "Grass"
-            },
-            ginasios: [
-                { id: 1, nome: "Pewter Gym", lider: "Brock", concluido: 1 },
-                { id: 2, nome: "Cerulean Gym", lider: "Misty", concluido: 1 },
-                { id: 3, nome: "Vermilion Gym", lider: "Lt. Surge", concluido: 1 },
-                { id: 4, nome: "Celadon Gym", lider: "Erika", concluido: 0 },
-                { id: 5, nome: "Fuchsia Gym", lider: "Koga", concluido: 0 },
-                { id: 6, nome: "Saffron Gym", lider: "Sabrina", concluido: 0 },
-                { id: 7, nome: "Cinnabar Gym", lider: "Blaine", concluido: 0 },
-                { id: 8, nome: "Viridian Gym", lider: "Giovanni", concluido: 0 }
-            ],
-            capturados: [
-                { id: 1, nome: "Bulbasaur", tipo: "Grass" },
-                { id: 2, nome: "Pikachu", tipo: "Electric" },
-                { id: 3, nome: "Pidgeotto", tipo: "Flying" },
-                { id: 4, nome: "Nidoran", tipo: "Poison" },
-                { id: 5, nome: "Gyarados", tipo: "Water" },
-                { id: 6, nome: "Snorlax", tipo: "Normal" },
-                { id: 7, nome: "Oddish", tipo: "Grass" },
-                { id: 8, nome: "Growlithe", tipo: "Fire" }
-            ],
-            timeAtual: [
-                { id: 1, nome: "Bulbasaur", tipo: "Grass" },
-                { id: 2, nome: "Pikachu", tipo: "Electric" },
-                { id: 3, nome: "Pidgeotto", tipo: "Flying" },
-                { id: 5, nome: "Gyarados", tipo: "Water" },
-                { id: 6, nome: "Snorlax", tipo: "Normal" },
-                { id: 8, nome: "Growlithe", tipo: "Fire" }
-            ]
-        };
-
-        const dadosSetores = {
-            geral: {
-                barra: [100, 38, 5],
-                pizza: [1, 1, 1, 1, 1, 1],
-                barraLabel: "Progresso em Kanto",
-                barraTitle: "Distribuicao do progresso",
-                pizzaTitle: "Tipos do time principal",
-                pizzaLabels: ["Grass", "Electric", "Flying", "Water", "Normal", "Fire"]
-            }
-        };
-
-        let chartBarra;
-        let chartPizza;
-
-        function obterIdUsuario() {
-            const idUsuario = Number(sessionStorage.ID_USUARIO);
-            return Number.isInteger(idUsuario) && idUsuario > 0 ? idUsuario : 1;
-        }
-
-        function obterNomeTreinador() {
-            return String(sessionStorage.NOME_USUARIO || "Treinador").trim() || "Treinador";
-        }
-
-        function obterChaveStorage() {
-            return `${chaveStorageBase}-${obterIdUsuario()}`;
-        }
-
-        function obterDashboardSalvo() {
-            const bruto = localStorage.getItem(obterChaveStorage());
-
-            if (!bruto) {
-                return criarDashboardPadrao();
-            }
-
-            try {
-                return JSON.parse(bruto);
-            } catch (erro) {
-                console.error("Mock invalido no localStorage:", erro);
-                return criarDashboardPadrao();
-            }
-        }
-
-        function criarDashboardPadrao() {
-            return {
-                ...dashboardPadrao,
-                usuario: {
-                    id: obterIdUsuario(),
-                    nome: obterNomeTreinador()
-                }
-            };
-        }
-
-        function calcularResumo(dashboard) {
-            const ginasiosVencidos = (dashboard.ginasios || []).filter(ginasio => Number(ginasio.concluido) === 1).length;
-            const pokemonsCapturados = (dashboard.capturados || []).length;
-            const progressoStarter = dashboard.resumo && dashboard.resumo.starter ? 1 : 0;
-            const progressoGinasios = ginasiosVencidos / 8;
-            const progressoCapturas = Math.min(pokemonsCapturados, totalPokemonsKanto) / totalPokemonsKanto;
-            const percentualConclusao = Math.round(((progressoStarter + progressoGinasios + progressoCapturas) / 3) * 100);
-            const tipoMaisPresente = obterTipoMaisPresente(dashboard.timeAtual || []);
-
-            return {
-                starter: dashboard.resumo && dashboard.resumo.starter ? dashboard.resumo.starter : "Nao definido",
-                percentualConclusao,
-                ginasiosVencidos,
-                totalGinasios: 8,
-                pokemonsCapturados,
-                metaCapturas: totalPokemonsKanto,
-                tipoMaisPresente
-            };
-        }
-
-        function obterTipoMaisPresente(timeAtual) {
-            if (!timeAtual.length) {
-                return "Sem time";
-            }
-
-            const contagem = {};
-            let tipoDominante = "Sem time";
-            let maiorQuantidade = 0;
-
-            timeAtual.forEach(pokemon => {
-                const tipo = pokemon.tipo || "Normal";
-                contagem[tipo] = (contagem[tipo] || 0) + 1;
-
-                if (contagem[tipo] > maiorQuantidade) {
-                    maiorQuantidade = contagem[tipo];
-                    tipoDominante = tipo;
-                }
-            });
-
-            return tipoDominante;
-        }
-
-        function montarDadosSetores(dashboard) {
-            const resumo = calcularResumo(dashboard);
-            const tiposContados = {};
-
-            (dashboard.timeAtual || []).forEach(pokemon => {
-                const tipo = pokemon.tipo || "Normal";
-                tiposContados[tipo] = (tiposContados[tipo] || 0) + 1;
-            });
-
-            const tiposLabels = Object.keys(tiposContados);
-            const tiposValores = Object.values(tiposContados);
-
-            dadosSetores.geral = {
-                barra: [
-                    resumo.starter !== "Nao definido" ? 100 : 0,
-                    Math.round((resumo.ginasiosVencidos / resumo.totalGinasios) * 100),
-                    Math.round((resumo.pokemonsCapturados / resumo.metaCapturas) * 100)
-                ],
-                pizza: tiposValores.length ? tiposValores : [1],
-                barraLabel: "Progresso em Kanto",
-                barraTitle: "Distribuicao do progresso",
-                pizzaTitle: "Tipos do time principal",
-                pizzaLabels: tiposLabels.length ? tiposLabels : ["Sem time"]
-            };
-
-            return resumo;
-        }
-
-        function preencherResumo(resumo) {
-            document.getElementById("nomeTreinadorSidebar").textContent = obterNomeTreinador();
-            document.getElementById("percentualConclusao").textContent = `${resumo.percentualConclusao}%`;
-            document.getElementById("starterAtual").textContent = resumo.starter;
-            document.getElementById("ginasiosVencidos").textContent = `${resumo.ginasiosVencidos}/${resumo.totalGinasios}`;
-            document.getElementById("capturasTotais").textContent = resumo.pokemonsCapturados;
-            document.getElementById("tipoDominante").textContent = resumo.tipoMaisPresente;
-            document.getElementById("barraConclusao").style.width = `${resumo.percentualConclusao}%`;
-        }
-
-        function inicializarGraficos() {
-            const dados = dadosSetores.geral;
-
-            chartBarra = new Chart(document.getElementById("graficoProgresso"), {
-                type: "bar",
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        title: {
-                            display: true,
-                            text: dados.barraTitle,
-                            color: "#fff4b8",
-                            font: { size: 18 }
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function (context) {
-                                    return `${context.raw}%`;
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        x: {
-                            ticks: {
-                                color: "#f4f7ff"
-                            },
-                            grid: {
-                                display: false
-                            }
-                        },
-                        y: {
-                            beginAtZero: true,
-                            max: 100,
-                            ticks: {
-                                color: "#dce9ff",
-                                callback: function (value) {
-                                    return value + "%";
-                                }
-                            },
-                            grid: {
-                                color: "rgba(255,255,255,0.08)"
-                            }
-                        }
-                    }
-                },
-                data: {
-                    labels: ["Starter", "Ginasios", "Capturas"],
-                    datasets: [{
-                        label: dados.barraLabel,
-                        data: dados.barra,
-                        backgroundColor: colorspizza,
-                        borderRadius: 8
-                    }]
-                }
-            });
-
-            chartPizza = new Chart(document.getElementById("graficoTipos"), {
-                type: "pie",
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: dados.pizzaTitle,
-                            color: "#fff4b8",
-                            font: { size: 18 }
-                        },
-                        legend: {
-                            position: "bottom",
-                            labels: {
-                                color: "#f4f7ff"
-                            }
-                        }
-                    }
-                },
-                data: {
-                    labels: dados.pizzaLabels,
-                    datasets: [{
-                        data: dados.pizza,
-                        backgroundColor: [...colorspizza, ...colors, ...colorssemana].slice(0, dados.pizza.length)
-                    }]
-                }
-            });
-        }
-
-        function atualizarGraficos() {
-            const dados = dadosSetores.geral;
-
-            chartBarra.options.plugins.title.text = dados.barraTitle;
-            chartBarra.data.datasets[0].label = dados.barraLabel;
-            chartBarra.data.datasets[0].data = dados.barra;
-            chartBarra.update();
-
-            chartPizza.options.plugins.title.text = dados.pizzaTitle;
-            chartPizza.data.labels = dados.pizzaLabels;
-            chartPizza.data.datasets[0].data = dados.pizza;
-            chartPizza.data.datasets[0].backgroundColor = [...colorspizza, ...colors, ...colorssemana].slice(0, dados.pizza.length);
-            chartPizza.update();
-        }
-
-        document.addEventListener("DOMContentLoaded", function () {
-            const dashboard = obterDashboardSalvo();
-            const resumo = montarDadosSetores(dashboard);
-
-            preencherResumo(resumo);
-            inicializarGraficos();
-            atualizarGraficos();
-        });
-    </script>
 </body>
 </html>

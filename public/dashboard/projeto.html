@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro do Projeto | PokeGreen</title>
+    <link rel="stylesheet" href="projeto.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Telex&display=swap" rel="stylesheet">
+
+    <script src="../js/sessao.js"></script>
+    <script src="./../js/alerta.js"></script>
+</head>
+<body>
+<div class="layout-dashboard">
+    <aside class="sidebar">
+        <div class="sidebar-topo">
+            <span class="sidebar-label">Treinador</span>
+            <span class="sidebar-nome" id="b_usuario">usuario</span>
+
+            <p class="sidebar-descricao">Toda a parte de registro do projeto fica aqui.</p>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="cards.html" class="nav-link">Visão geral</a>
+            <a href="projeto.html" class="nav-link ativo">Registrar projeto</a>
+            <a href="../index.html" class="nav-link">Voltar ao site</a>
+        </nav>
+    </aside>
+
+    <main class="conteudo-principal">
+        <div class="cabecalho-pagina">
+            <div class="cabecalho-texto">
+                <h1>Registre pokémon inicial, ginásios e mais pokémons</h1>
+                <p>Use esta página para atualizar o progresso do jogo.</p>
+            </div>
+
+            <div class="card-p">
+                <span>Status do projeto</span>
+                <span class="porcentagem">Em andamento</span>
+            </div>
+        </div>
+
+        <div class="graficos-grid">
+            <div class="painel">
+                <h2>Escolha o inicial</h2>
+                <select id="selectInicial"></select>
+                <button onclick="salvarInicial()" class="botao">
+                    Escolher Inicial
+                </button>
+            </div>
+
+            <div class="painel">
+                <h2>Ginásios concluídos</h2>
+                <div id="ginasiosLista" class="ginasios-lista"></div>
+            </div>
+        </div>
+
+        <div class="graficos-grid">
+            <div class="painel">
+                <h2>Pokémon capturados</h2>
+                    <select id="selectCaptura"></select>
+                    <button onclick="capturarPokemon()" class="botao">Adicionar captura</button>
+                <div id="capturadosLista" class="pokemon-lista"></div>
+
+            </div>
+            <div class="painel">
+                <h2>Monte seu time</h2>
+                    <select id="pokemonTimeSelect"></select>
+
+                    <button onclick="adicionarAoTime()" class="botao botao-secundario">
+                        Adicionar ao time
+                    </button>
+
+                <div class="tipo-destaque">
+                    <span>Tipo mais presente</span>
+                    <span id="tipoMaisPresentePainel" class="porcentagem">
+                        Sem time
+                    </span>
+                </div>
+                <div id="timeLista" class="time-lista"></div>
+            </div>
+        </div>
+
+        <div class="painel">
+            <p class="mensagem-apoio">Clique aqui sempre que quiser atualizar seu progresso.</p>    
+            <button id="botaoSalvar" class="botao" onclick="salvarDashboard()">Salvar progresso</button>
+        </div>
+    </main>
+</div>
+</body>
+</html>
+
+<script>
+    b_usuario.innerHTML = sessionStorage.NOME_USUARIO;
+
+    window.onload = function () {
+    carregarPokemons();
+    listarCapturados();
+}
+
+    let dashboardAtual = {
+    capturados: [],
+    timeAtual: []
+    };
+
+    function carregarPokemons() {
+
+    fetch("/pokemon/listarTodos")
+        .then(function(resposta) {
+            return resposta.json();
+        })
+        .then(function(pokemons) {
+            var selectCaptura = document.getElementById("selectCaptura");
+            var selectInicial = document.getElementById("selectInicial");
+
+            selectCaptura.innerHTML = `<option value="">Selecione um pokemon</option>`;
+
+            selectInicial.innerHTML = `<option value="">Escolha seu inicial</option>`;
+
+            pokemons.forEach(function(pokemon) {
+
+                selectCaptura.innerHTML += `<option value="${pokemon.id}">
+                                            ${pokemon.nome} - ${pokemon.tipo}
+                                            </option>
+                                            `;
+
+                if (pokemon.nome === "Bulbassauro" ||
+                    pokemon.nome === "Charmander" ||
+                    pokemon.nome === "Squirtle"
+                ) {
+                    selectInicial.innerHTML += `<option value="${pokemon.id}">
+                                                ${pokemon.nome}
+                                                </option>
+                                                `;
+                }
+            });
+
+        })
+        .catch(function(erro) {
+            console.log(erro);
+        });
+
+}
+
+function capturarPokemon() {
+
+    var select = document.getElementById("selectCaptura");
+    var idPokemon = select.value;
+
+    if (idPokemon == "") {
+        alert("Selecione um pokemon");
+        return;
+    }
+
+    fetch("/pokemon/capturar", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            idUsuario: sessionStorage.ID_USUARIO,
+            idPokemon: idPokemon
+        })
+    })
+    .then(function(resposta) {
+        if (resposta.ok) {
+            listarCapturados();
+            alert("Pokemon capturado com sucesso!");
+        }else {
+            console.log("Não foi possível capturar o pokemon");
+        }
+
+    })
+    .catch(function(erro) {
+        console.log(erro);
+    });
+
+}
+
+function listarCapturados() {
+
+    fetch(`/pokemon/capturados/${sessionStorage.ID_USUARIO}`)
+        .then(function(resposta) {
+            return resposta.json();
+        })
+        .then(function(pokemons) {
+            dashboardAtual.capturados = pokemons;
+
+            renderizarListaCapturados();
+            renderizarSelectTime();
+        })
+        .catch(function(erro) {
+            console.log(erro);
+        });
+
+}
+
+function renderizarListaCapturados() {
+    var container = document.getElementById("capturadosLista");
+
+    container.innerHTML = "";
+
+    dashboardAtual.capturados.forEach(function(pokemon) {
+
+        container.innerHTML += `
+            <div class="pokemon-card">
+                <h3>${pokemon.nome}</h3>
+                <span>
+                    ${pokemon.tipo}
+                </span>
+            </div>
+        `;
+    });
+}
+
+function renderizarSelectTime() {
+    var select = document.getElementById("pokemonTimeSelect");
+
+    select.innerHTML = `<option value="">
+                            Selecione um pokemon
+                        </option>
+                        `;
+
+    dashboardAtual.capturados.forEach(function(pokemon) {
+        select.innerHTML += `<option value="${pokemon.id}">
+                                ${pokemon.nome}
+                            </option>
+                        `;
+    });
+}
+
+function adicionarAoTime() {
+
+    var select = document.getElementById("pokemonTimeSelect");
+    var idPokemon = select.value;
+
+    if (idPokemon == "") {
+        alert("Selecione um pokemon para adicionar");
+        return;
+    }
+
+    fetch("/pokemon/time", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            idTime: 1,
+            idPokemon: idPokemon
+        })
+    })
+    .then(function(resposta) {
+        if (resposta.ok) {
+            alert("Pokemon adicionado ao time!");
+        } else {
+            console.log("Erro ao adicionar pokemon");
+        }
+
+    })
+    .catch(function(erro) {
+        console.log(erro);
+    });
+
+}
+
+function salvarInicial() {
+
+    var select = document.getElementById("selectInicial");
+
+    var idPokemon = select.value;
+
+    if (idPokemon == "") {
+        alert("Escolha um pokemon inicial");
+        return;
+    }
+
+    fetch("/pokemon/inicial", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            idUsuario: sessionStorage.ID_USUARIO,
+            idPokemon: idPokemon
+        })
+    })
+    .then(function(resposta) {
+        if (resposta.ok) {
+            alert("Inicial salvo com sucesso!");
+        }else {
+            console.log("Erro ao salvar starter");
+
+        }
+
+    })
+    .catch(function(erro) {
+        console.log(erro);
+    });
+
+}
+</script>

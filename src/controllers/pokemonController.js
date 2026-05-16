@@ -52,6 +52,18 @@ function listarCapturados(req, res) {
         });
 }
 
+function listarTime(req, res) {
+    var idUsuario = req.params.idUsuario;
+    pokemonModel.listarTime(idUsuario)
+        .then(function(resultado) {
+            res.json(resultado);
+        })
+        .catch(function(erro) {
+            console.log(erro);
+            res.status(500).json(erro);
+        });
+}
+
 function adicionarAoTime(req, res) {
     var idTime = req.body.idTime;
     var idPokemon = req.body.idPokemon;
@@ -71,5 +83,7 @@ module.exports = {
     capturar,
     listarCapturados,
     definirInicial,
-    adicionarAoTime
+    adicionarAoTime,
+    listarTime,
+
 };

@@ -11,6 +11,10 @@ router.get("/capturados/:idUsuario", function(req, res) {
     pokemonController.listarCapturados(req, res);
 });
 
+router.get("/timeAtual/:idUsuario", function(req, res) {
+    pokemonController.listarTime(req, res);
+});
+
 router.post("/capturar", function(req, res) {
     pokemonController.capturar(req, res);
 });

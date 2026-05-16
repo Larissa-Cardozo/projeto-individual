@@ -30,12 +30,13 @@ function listarCapturados(idUsuario) {
     return database.executar(instrucaoSql);
 }
 
-function listarTime(idTime) {
+function listarTime(idUsuario) {
     var instrucaoSql = `
         SELECT p.id, p.nome, p.tipo FROM time_pokemons tp
         JOIN pokemons p
         ON tp.id_pokemon = p.id
-        WHERE tp.id_time = ${idTime};
+        JOIN times t ON tp.id_time = t.id
+        WHERE t.id_usuario = ${idUsuario};  
     `;
     console.log("Executando a instrução SQL: \n" + instrucaoSql);
     return database.executar(instrucaoSql);

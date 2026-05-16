@@ -19,6 +19,7 @@ var indexRouter = require("./src/routes/index");
 var usuarioRouter = require("./src/routes/usuarios");
 var dashboardRouter = require("./src/routes/dashboard");
 var pokemonRouter = require("./src/routes/pokemon");
+var ginasiosRouter = require("./src/routes/ginasios");
 
 
 app.use(express.json());
@@ -30,6 +31,7 @@ app.use("/", indexRouter);
 app.use("/usuarios", usuarioRouter);
 app.use("/dashboard", dashboardRouter);
 app.use("/pokemon", pokemonRouter);
+app.use("/ginasios", ginasiosRouter);
 
 app.listen(PORTA_APP, function () {
     console.log(`

@@ -99,6 +99,8 @@
     window.onload = function () {
     carregarPokemons();
     listarCapturados();
+    listarTime();
+    listarGinasios();
 }
 
     let dashboardAtual = {
@@ -198,6 +200,23 @@ function listarCapturados() {
 
 }
 
+function listarTime() {
+
+    fetch(`/pokemon/timeAtual/${sessionStorage.ID_USUARIO}`)
+        .then(function(resposta) {
+            return resposta.json();
+        })
+        .then(function(pokemons) {
+            dashboardAtual.timeAtual = pokemons;
+
+            renderizarTime();
+        })
+        .catch(function(erro) {
+            console.log(erro);
+        });
+
+}
+
 function renderizarListaCapturados() {
     var container = document.getElementById("capturadosLista");
 
@@ -232,6 +251,20 @@ function renderizarSelectTime() {
     });
 }
 
+function renderizarTime() {
+    var container = document.getElementById("timeLista");
+    container.innerHTML = "";
+
+    dashboardAtual.timeAtual.forEach(function(pokemon) {
+        container.innerHTML += `
+            <div class="pokemon-card">
+                <h3>${pokemon.nome}</h3>
+                <span>${pokemon.tipo}</span>
+            </div>
+        `;
+    });
+}
+
 function adicionarAoTime() {
 
     var select = document.getElementById("pokemonTimeSelect");
@@ -242,6 +275,11 @@ function adicionarAoTime() {
         return;
     }
 
+    if (dashboardAtual.timeAtual.length >= 6) {
+        alert("Seu time já está cheio! Máximo de 6 pokémons.");
+        return;
+    }
+    
     fetch("/pokemon/time", {
         method: "POST",
         headers: {
@@ -254,6 +292,7 @@ function adicionarAoTime() {
     })
     .then(function(resposta) {
         if (resposta.ok) {
+            listarTime()
             alert("Pokemon adicionado ao time!");
         } else {
             console.log("Erro ao adicionar pokemon");
@@ -300,5 +339,61 @@ function salvarInicial() {
         console.log(erro);
     });
 
+}
+
+function listarGinasios() {
+    fetch(`/ginasios/${sessionStorage.ID_USUARIO}`)
+        .then(function(resposta) {
+            return resposta.json();
+        })
+        .then(function(ginasios) {
+            renderizarGinasios(ginasios);
+        })
+        .catch(function(erro) {
+            console.log(erro);
+        });
+}
+
+function renderizarGinasios(ginasios) {
+    var container = document.getElementById("ginasiosLista");
+    container.innerHTML = "";
+
+    ginasios.forEach(function(ginasio) {
+        container.innerHTML += `
+            <div class="ginasio-item">
+                <input 
+                    type="checkbox" 
+                    id="ginasio-${ginasio.id}"
+                    ${ginasio.concluido ? "checked" : ""}
+                    onchange="atualizarGinasio(${ginasio.id}, this.checked)"
+                >
+                <label for="ginasio-${ginasio.id}">
+                    ${ginasio.nome} — ${ginasio.lider}
+                </label>
+            </div>
+        `;
+    });
+}
+
+function atualizarGinasio(idGinasio, concluido) {
+    fetch("/ginasios/concluir", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            idUsuario: sessionStorage.ID_USUARIO,
+            idGinasio: idGinasio,
+            concluido: concluido
+        })
+    })
+    .then(function(resposta) {
+        if (!resposta.ok) {
+            console.log("Erro ao atualizar ginásio");
+        }
+    })
+    .catch(function(erro) {
+        console.log(erro);
+    });
 }
 </script>

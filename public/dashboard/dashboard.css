@@ -103,7 +103,7 @@ p,span,a {
     gap: 40px;
 }
 
-.cabecalho-texto,.card-p,.card-metrica,.painel {
+.card-p,.card-metrica,.painel {
     border-radius: 28px;
     background:radial-gradient(circle at right, rgba(255, 205, 5, 0.171), transparent 70%),
         linear-gradient(180deg, #10233f 0%, #0b1830 45%, #091322 100%);
@@ -120,6 +120,9 @@ p,span,a {
 }
 
 .cabecalho-texto h1 {
+    font-size: 30px;
+}
+.cabecalho-texto p {
     font-size: 30px;
 }
 
@@ -170,20 +173,21 @@ p,span,a {
 }
 
 .painel {
-    height: 360px;
+    height: 400px;
     width: 100%;
     padding: 26px;
     display: flex;
     flex-direction: column;
     gap: 18px;
-}
-
-.painel h2 {
-    font-size: 25px;
+    overflow: hidden;
 }
 
 canvas {
     width: 100%;
     height: 100%;
+    max-height: 300px;
+}
 
+.painel h2 {
+    font-size: 25px;
 }

@@ -26,5 +26,11 @@ router.post("/inicial", function(req, res) {
 router.post("/time", function(req, res) {
     pokemonController.adicionarAoTime(req, res);
 });
+router.delete("/time/remover", function(req, res) {
+    pokemonController.removerDoTime(req, res);
+});
 
+router.get("/capturadosPorTipo/:idUsuario", function(req, res) {
+    pokemonController.capturadosPorTipo(req, res);
+});
 module.exports = router;

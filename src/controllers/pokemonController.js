@@ -78,6 +78,33 @@ function adicionarAoTime(req, res) {
         });
 }
 
+function removerDoTime(req, res) {
+    var idPokemon = req.body.idPokemon;
+    var idTime = req.body.idTime;
+
+    pokemonModel.removerDoTime(idPokemon, idTime)
+        .then(function() {
+            res.status(200).send("Pokemon removido do time!");
+        })
+        .catch(function(erro) {
+            console.log(erro);
+            res.status(500).json(erro);
+        });
+}
+
+function capturadosPorTipo(req, res) {
+    var idUsuario = req.params.idUsuario;
+
+    pokemonModel.capturadosPorTipo(idUsuario)
+        .then(function(resultado) {
+            res.json(resultado);
+        })
+        .catch(function(erro) {
+            console.log(erro);
+            res.status(500).json(erro);
+        });
+}
+
 module.exports = {
     listarTodos,
     capturar,
@@ -85,5 +112,6 @@ module.exports = {
     definirInicial,
     adicionarAoTime,
     listarTime,
-
+    removerDoTime,
+    capturadosPorTipo
 };

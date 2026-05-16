@@ -3,12 +3,12 @@ var router = express.Router();
 
 var dashboardController = require("../controllers/dashboardController");
 
-router.get("/api/:idUsuario", function (req, res) {
-    dashboardController.buscar(req, res);
+router.get("/dados/:idUsuario", function(req, res) {
+    dashboardController.buscarDados(req, res);
 });
 
-router.post("/api/:idUsuario", function (req, res) {
-    dashboardController.salvar(req, res);
+router.get("/tipoDominante/:idUsuario", function(req, res) {
+    dashboardController.buscarTipoDominante(req, res);
 });
 
 module.exports = router;

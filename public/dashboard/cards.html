@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Telex&display=swap" rel="stylesheet">
-
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="../js/sessao.js"></script>
     <script src="./../js/alerta.js"></script>
 </head>
@@ -19,7 +19,7 @@
         <aside class="sidebar">
             <div class="sidebar-topo">
                 <span class="sidebar-label">Treinador:</span>
-                <span class="sidebar-nome">Larissa</span>
+                <span class="sidebar-nome" id="b_usuario">usuario</span>
 
                 <p class="sidebar-descricao">Acompanhe aqui seu progresso!</p>
             </div>
@@ -40,32 +40,29 @@
 
                 <div class="card-p">
                     <p>Conclusão geral</p>
-
-                    <span class="porcentagem">48%</span>
-
+                    <span class="porcentagem" id="conclusaoGeral">0%</span>
                 </div>
-
             </div>
 
             <div class="metricas">
-                <div class="card-metrica">
+                <div class="card-metrica" id="cardInicial">
                     <h3>Inicial</h3>
-                    <p>Bulbassauro</p>
+                    <p id="kpiInicial">-</p>
                 </div>
 
-                <div class="card-metrica">
+                <div class="card-metrica" id="cardGinasios">
                     <h3>Ginásios vencidos</h3>
-                    <p>3/8</p>
+                    <p id="kpiGinasios">-</p>
                 </div>
 
                 <div class="card-metrica">
                     <h3>Capturas</h3>
-                    <p>8</p>
+                    <p id="kpiCapturas">-</p>
                 </div>
 
-                <div class="card-metrica">
+                <div class="card-metrica" id="cardTipo">
                     <h3>Tipo dominante</h3>
-                    <p>Grama</p>
+                    <p id="kpiTipo">-</p>
                 </div>
 
             </div>
@@ -86,3 +83,325 @@
     </div>
 </body>
 </html>
+
+<script>
+    b_usuario.innerHTML = sessionStorage.NOME_USUARIO;
+
+    window.onload = function() {
+        obterDadosKpi();
+        obterDadosRadar();
+    }
+
+    // ─── KPIs + Gráfico de Barras ───────────────────────────────────────
+
+    function obterDadosKpi() {
+        var idUsuario = sessionStorage.ID_USUARIO;
+
+        fetch(`/dashboard/dados/${idUsuario}`)
+            .then(function(resposta) {
+                return resposta.json();
+            })
+            .then(function(dados) {
+                exibirKpis(dados);
+                plotarGraficoBarras(dados);
+            })
+            .catch(function(erro) {
+                console.log(erro);
+            });
+
+        fetch(`/dashboard/tipoDominante/${idUsuario}`)
+            .then(function(resposta) {
+                return resposta.json();
+            })
+            .then(function(dado) {
+                document.getElementById("kpiTipo").innerHTML =
+                    dado ? dado.tipo : "Sem time";
+            })
+            .catch(function(erro) {
+                console.log(erro);
+            });
+    }
+
+    function exibirKpis(dados) {
+        document.getElementById("kpiInicial").innerHTML =
+            dados.inicial || "Não escolhido";
+        document.getElementById("kpiGinasios").innerHTML =
+            dados.ginasios_concluidos + "/8";
+        document.getElementById("kpiCapturas").innerHTML =
+            dados.total_capturados;
+        document.getElementById("conclusaoGeral").innerHTML =
+            dados.conclusao_geral + "%";
+
+        var cardInicial = document.getElementById("cardInicial");
+
+        if (dados.inicial === "Squirtle") {
+            cardInicial.style.borderColor = "#64a0ff";
+            cardInicial.style.background = "radial-gradient(circle at right, rgba(100, 160, 255, 0.25), transparent 70%), linear-gradient(180deg, #10233f 0%, #0b1830 45%, #091322 100%)";
+        } else if (dados.inicial === "Bulbassauro") {
+            cardInicial.style.borderColor = "#4CAF50";
+            cardInicial.style.background = "radial-gradient(circle at right, rgba(76, 175, 80, 0.25), transparent 70%), linear-gradient(180deg, #10233f 0%, #0b1830 45%, #091322 100%)";
+        } else if (dados.inicial === "Charmander") {
+            cardInicial.style.borderColor = "#ff6b35";
+            cardInicial.style.background = "radial-gradient(circle at right, rgba(255, 107, 53, 0.25), transparent 70%), linear-gradient(180deg, #10233f 0%, #0b1830 45%, #091322 100%)";
+        }    
+
+        var cardGinasios = document.getElementById("cardGinasios");
+        var ginasios = dados.ginasios_concluidos;
+
+        if(ginasios === 0){
+            cardGinasios.style.borderColor = "#ff0000";
+            cardGinasios.style.background =
+            "radial-gradient(circle at right, rgba(255, 0, 0, 0.25), transparent 70%), linear-gradient(180deg, #3f1010 0%, #301010 45%, #220909 100%)";
+        }else if(ginasios === 1){
+            cardGinasios.style.borderColor = "#ff3300";
+            cardGinasios.style.background =
+            "radial-gradient(circle at right, rgba(255, 51, 0, 0.25), transparent 70%), linear-gradient(180deg, #3f1810 0%, #301410 45%, #221009 100%)";
+        }else if(ginasios === 2){
+            cardGinasios.style.borderColor = "#ff6600";
+            cardGinasios.style.background =
+            "radial-gradient(circle at right, rgba(255, 102, 0, 0.25), transparent 70%), linear-gradient(180deg, #3f2210 0%, #301b10 45%, #221309 100%)";
+        }else if(ginasios === 3){
+            cardGinasios.style.borderColor = "#ff9900";
+            cardGinasios.style.background =
+            "radial-gradient(circle at right, rgba(255, 153, 0, 0.25), transparent 70%), linear-gradient(180deg, #3f2b10 0%, #302110 45%, #221809 100%)";
+        }else if(ginasios === 4){
+            cardGinasios.style.borderColor = "#ffcc00";
+            cardGinasios.style.background =
+            "radial-gradient(circle at right, rgba(255, 204, 0, 0.25), transparent 70%), linear-gradient(180deg, #3f3510 0%, #302810 45%, #221d09 100%)";
+        }else if(ginasios === 5){
+            cardGinasios.style.borderColor = "#ccff00";
+            cardGinasios.style.background =
+            "radial-gradient(circle at right, rgba(204, 255, 0, 0.25), transparent 70%), linear-gradient(180deg, #313f10 0%, #263010 45%, #1b2209 100%)";
+        }else if(ginasios === 6){
+            cardGinasios.style.borderColor = "#99ff00";
+            cardGinasios.style.background =
+            "radial-gradient(circle at right, rgba(153, 255, 0, 0.25), transparent 70%), linear-gradient(180deg, #263f10 0%, #1f3010 45%, #162209 100%)";
+        }else if(ginasios === 7){
+            cardGinasios.style.borderColor = "#66ff00";
+            cardGinasios.style.background =
+            "radial-gradient(circle at right, rgba(102, 255, 0, 0.25), transparent 70%), linear-gradient(180deg, #1c3f10 0%, #173010 45%, #112209 100%)";
+        }else if(ginasios === 8){
+            cardGinasios.style.borderColor = "#00ff00";
+            cardGinasios.style.background =
+            "radial-gradient(circle at right, rgba(102, 255, 0, 0.25), transparent 70%), linear-gradient(180deg, #1c3f10 0%, #173010 45%, #112209 100%)";
+        }
+    }
+
+    function plotarGraficoBarras(dados) {
+        new Chart(document.getElementById("graficoProgresso"), {
+            type: "bar",
+            data: {
+                labels: ["Inicial", "Ginásios", "Pokémons"],
+                datasets: [{
+                    label: "Progresso",
+                    data: [
+                        dados.inicial ? 100 : 0,
+                        Math.round(dados.ginasios_concluidos / 8 * 100),
+                        Math.round(dados.total_capturados / 150 * 100)
+                    ],
+                    backgroundColor: [
+                        "rgba(255, 203, 5, 0.7)",
+                        "rgba(76, 175, 80, 0.7)",
+                        "rgba(100, 160, 255, 0.7)"
+                    ],
+                    borderColor: [
+                        "#ffcb05",
+                        "#4CAF50",
+                        "#64a0ff"
+                    ],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            color: "#ffffff",
+                            callback: function(valor) {
+                                return valor + "%";
+                            }
+                        },
+                        grid: {
+                            color: "rgba(255, 255, 255, 0.1)"
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: "#ffffff",
+                            font: { size: 14 }
+                        },
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // ─── Radar ─────────────────────────────────────────────────────────
+
+    function obterDadosRadar() {
+    var idUsuario = sessionStorage.ID_USUARIO;
+
+    fetch(`/pokemon/timeAtual/${idUsuario}`)
+        .then(function(resposta) {
+            return resposta.json();
+        })
+        .then(function(pokemons) {
+            var contagem = contarTipos(pokemons);
+            plotarGraficoRadar(contagem);
+            colorirCardTipo(contagem);  // ✅ adiciona essa chamada
+        })
+        .catch(function(erro) {
+            console.log(erro);
+        });
+}
+
+function colorirCardTipo(contagem) {
+    var cardTipo = document.getElementById("cardTipo");
+
+    // descobre o tipo dominante
+    var tipoDominante = null;
+    var maior = 0;
+    for (var tipo in contagem) {
+        if (contagem[tipo] > maior) {
+            maior = contagem[tipo];
+            tipoDominante = tipo;
+        }
+    }
+
+    if (tipoDominante === "Fogo") {
+    cardTipo.style.borderColor = "#ff6b35";
+    cardTipo.style.background = "radial-gradient(circle at right, rgba(255, 107, 53, 0.25), transparent 70%), linear-gradient(180deg, #3f1c10 0%, #301610 45%, #221009 100%)";
+    } else if (tipoDominante === "Água") {
+        cardTipo.style.borderColor = "#64a0ff";
+        cardTipo.style.background = "radial-gradient(circle at right, rgba(100, 160, 255, 0.25), transparent 70%), linear-gradient(180deg, #10233f 0%, #101b30 45%, #091322 100%)";
+
+    } else if (tipoDominante === "Planta") {
+        cardTipo.style.borderColor = "#4CAF50";
+        cardTipo.style.background = "radial-gradient(circle at right, rgba(76, 175, 80, 0.25), transparent 70%), linear-gradient(180deg, #103f18 0%, #103016 45%, #09220f 100%)";
+
+    } else if (tipoDominante === "Elétrico") {
+        cardTipo.style.borderColor = "#ffcb05";
+        cardTipo.style.background = "radial-gradient(circle at right, rgba(255, 203, 5, 0.25), transparent 70%), linear-gradient(180deg, #3f3510 0%, #302810 45%, #221d09 100%)";
+
+    } else if (tipoDominante === "Psíquico") {
+        cardTipo.style.borderColor = "#ff69b4";
+        cardTipo.style.background = "radial-gradient(circle at right, rgba(255, 105, 180, 0.25), transparent 70%), linear-gradient(180deg, #3f1028 0%, #301020 45%, #220916 100%)";
+
+    } else if (tipoDominante === "Pedra") {
+        cardTipo.style.borderColor = "#b8a038";
+        cardTipo.style.background = "radial-gradient(circle at right, rgba(184, 160, 56, 0.25), transparent 70%), linear-gradient(180deg, #3a3210 0%, #2c2610 45%, #1f1b09 100%)";
+
+    } else if (tipoDominante === "Fantasma") {
+        cardTipo.style.borderColor = "#705898";
+        cardTipo.style.background = "radial-gradient(circle at right, rgba(112, 88, 152, 0.25), transparent 70%), linear-gradient(180deg, #22103f 0%, #1b1030 45%, #130922 100%)";
+
+    } else if (tipoDominante === "Veneno") {
+        cardTipo.style.borderColor = "#a040a0";
+        cardTipo.style.background = "radial-gradient(circle at right, rgba(160, 64, 160, 0.25), transparent 70%), linear-gradient(180deg, #32103f 0%, #261030 45%, #1b0922 100%)";
+
+    } else if (tipoDominante === "Terra") {
+        cardTipo.style.borderColor = "#e0c068";
+        cardTipo.style.background = "radial-gradient(circle at right, rgba(224, 192, 104, 0.25), transparent 70%), linear-gradient(180deg, #3f2f10 0%, #302410 45%, #221909 100%)";
+
+    } else if (tipoDominante === "Voador") {
+        cardTipo.style.borderColor = "#98d8d8";
+        cardTipo.style.background = "radial-gradient(circle at right, rgba(152, 216, 216, 0.25), transparent 70%), linear-gradient(180deg, #10353f 0%, #102930 45%, #091d22 100%)";
+
+    } else if (tipoDominante === "Inseto") {
+        cardTipo.style.borderColor = "#a8b820";
+        cardTipo.style.background = "radial-gradient(circle at right, rgba(168, 184, 32, 0.25), transparent 70%), linear-gradient(180deg, #313f10 0%, #263010 45%, #1b2209 100%)";
+
+    } else if (tipoDominante === "Normal") {
+        cardTipo.style.borderColor = "#a8a878";
+        cardTipo.style.background = "radial-gradient(circle at right, rgba(168, 168, 120, 0.25), transparent 70%), linear-gradient(180deg, #303018 0%, #252512 45%, #1a1a0c 100%)";
+
+    } else if (tipoDominante === "Lutador") {
+        cardTipo.style.borderColor = "#c03028";
+        cardTipo.style.background = "radial-gradient(circle at right, rgba(192, 48, 40, 0.25), transparent 70%), linear-gradient(180deg, #3f1410 0%, #301010 45%, #220909 100%)";
+
+    } else if (tipoDominante === "Gelo") {
+        cardTipo.style.borderColor = "#98d8d8";
+        cardTipo.style.background = "radial-gradient(circle at right, rgba(152, 216, 216, 0.25), transparent 70%), linear-gradient(180deg, #103a3f 0%, #102d30 45%, #091f22 100%)";
+
+    } else if (tipoDominante === "Dragão") {
+        cardTipo.style.borderColor = "#7038f8";
+        cardTipo.style.background = "radial-gradient(circle at right, rgba(112, 56, 248, 0.25), transparent 70%), linear-gradient(180deg, #1d103f 0%, #171030 45%, #100922 100%)";
+
+    } else if (tipoDominante === "Fada") {
+        cardTipo.style.borderColor = "#ee99ac";
+        cardTipo.style.background = "radial-gradient(circle at right, rgba(238, 153, 172, 0.25), transparent 70%), linear-gradient(180deg, #3f1a28 0%, #301420 45%, #220d16 100%)";
+    }
+}
+
+    function contarTipos(pokemons) {
+        var contagem = {};
+        pokemons.forEach(function(pokemon) {
+            if (contagem[pokemon.tipo]) {
+                contagem[pokemon.tipo]++;
+            } else {
+                contagem[pokemon.tipo] = 1;
+            }
+        });
+        return contagem;
+    }
+
+    function plotarGraficoRadar(contagem) {
+        var tipos = Object.keys(contagem);
+        var quantidades = Object.values(contagem);
+
+        new Chart(document.getElementById("graficoTipos"), {
+            type: "radar",
+            data: {
+                labels: tipos,
+                datasets: [{
+                    label: "Tipos do time",
+                    data: quantidades,
+                    backgroundColor: "rgba(76, 175, 80, 0.2)",
+                    borderColor: "#4CAF50",
+                    pointBackgroundColor: "#4CAF50"
+                }]
+            },
+            options: {
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        labels: {
+                            color: "#ffffff",
+                            font: { size: 14 }
+                        }
+                    }
+                },
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1,
+                            color: "#ffffff",
+                            backdropColor: "transparent"
+                        },
+                        grid: {
+                            color: "rgba(255, 255, 255, 0.3)"
+                        },
+                        pointLabels: {
+                            color: "#ffffff",
+                            font: { size: 13 }
+                        },
+                        angleLines: {
+                            color: "rgba(255, 255, 255, 0.3)"
+                        }
+                    }
+                }
+            }
+        });
+    }
+</script>

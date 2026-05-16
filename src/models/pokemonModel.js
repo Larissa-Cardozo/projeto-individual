@@ -55,6 +55,27 @@ function adicionarAoTime(idTime, idPokemon) {
     console.log("Executando a instrução SQL: \n" + instrucaoSql);
     return database.executar(instrucaoSql);
 }
+function removerDoTime(idPokemon, idTime) {
+    var instrucaoSql = `
+        DELETE FROM time_pokemons
+        WHERE id_pokemon = ${idPokemon} AND id_time = ${idTime};
+    `;
+    console.log("Executando a instrução SQL: \n" + instrucaoSql);
+    return database.executar(instrucaoSql);
+}
+
+function capturadosPorTipo(idUsuario) {
+    var instrucaoSql = `
+        SELECT p.tipo, COUNT(*) AS quantidade
+        FROM usuario_pokemons up
+        JOIN pokemons p ON up.id_pokemon = p.id
+        WHERE up.id_usuario = ${idUsuario}
+        GROUP BY p.tipo
+        ORDER BY quantidade DESC;
+    `;
+    console.log("Executando a instrução SQL: \n" + instrucaoSql);
+    return database.executar(instrucaoSql);
+}
 
 module.exports = {
     listarTodos,
@@ -62,5 +83,7 @@ module.exports = {
     capturar,
     adicionarAoTime,
     listarTime,
-    definirInicial
+    definirInicial,
+    removerDoTime,
+    capturadosPorTipo
 };

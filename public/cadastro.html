@@ -58,9 +58,20 @@
     var emailVar = ipt_email.value;
     var senhaVar = ipt_senha.value;
     var confirmacaoSenhaVar = ipt_confirmacao.value;
+    let maiuscula = 0
+    let minuscula = 0
 
     let mensagem = ""
-    // Verificando se há algum campo em branco
+
+    for(let i = 0; i < senhaVar.length; i++){
+        if(senhaVar[i] == senhaVar[i].toUpperCase()){
+            maiuscula++
+        }
+        if(senhaVar[i] == senhaVar[i].toLowerCase()){
+            minuscula++
+        }
+    }
+
     if (
       nomeVar == "" ||
       emailVar == "" ||
@@ -70,21 +81,30 @@
       mensagem = `<p class="exibir erro">Todos os campos devem ser prenchidos</p>`;
       exibir.innerHTML = mensagem;;
 
-      finalizarAguardar();
       return false;
     } else if(!emailVar.includes('@') || !emailVar.includes('.')){
             mensagem = `<p class="exibir erro">Email inválido</p>`;
             exibir.innerHTML = mensagem;
 
-            finalizarAguardar();
             return false;
-        }else if(senhaVar !== confirmacaoSenhaVar){
-             mensagem = `<p class="exibir erro">Senhas Divergentes</p>`;
+    }else if(senhaVar !== confirmacaoSenhaVar){
+            mensagem = `<p class="exibir erro">Senhas Divergentes</p>`;
             exibir.innerHTML = mensagem;
 
-            finalizarAguardar();
             return false;
-        }else{
+    }else if(maiuscula >= 1 && minuscula >= 1 && 
+    (senhaVar.includes('@') || 
+    senhaVar.includes('#') || 
+    senhaVar.includes('!') ||
+    senhaVar.includes('$') ||
+    senhaVar.includes('&') ||
+    senhaVar.includes('%')) ){
+        mensagem = `<p class="exibir erro">Senha deve conter letra maiúscula, minúscula e caracter especial</p>`;
+        exibir.innerHTML = mensagem;
+
+        return false;
+    }
+    else{
              // Enviando o valor da nova input
             fetch("/usuarios/cadastrar", {
             method: "POST",

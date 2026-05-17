@@ -51,7 +51,30 @@ function buscarTipoDominante(idUsuario) {
     return database.executar(instrucaoSql);
 }
 
+function registrarHistorico(idUsuario, porcentagem) {
+    var instrucaoSql = `
+        INSERT INTO historico_progresso (id_usuario, porcentagem)
+        VALUES (${idUsuario}, ${porcentagem})
+        ON DUPLICATE KEY UPDATE porcentagem = ${porcentagem};
+    `;
+    console.log("Executando a instrução SQL: \n" + instrucaoSql);
+    return database.executar(instrucaoSql);
+}
+
+function buscarHistorico(idUsuario) {
+    var instrucaoSql = `
+        SELECT porcentagem, data_registro
+        FROM historico_progresso
+        WHERE id_usuario = ${idUsuario}
+        ORDER BY data_registro ASC;
+    `;
+    console.log("Executando a instrução SQL: \n" + instrucaoSql);
+    return database.executar(instrucaoSql);
+}
+
 module.exports = {
     buscarDados,
-    buscarTipoDominante
+    buscarTipoDominante, 
+    registrarHistorico, 
+    buscarHistorico
 };

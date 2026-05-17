@@ -1,6 +1,5 @@
 CREATE DATABASE pokemonIndividual;
 USE pokemonIndividual;
-
 -- USUÁRIOS
 CREATE TABLE usuarios (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -10,8 +9,6 @@ CREATE TABLE usuarios (
     inicial VARCHAR(30),
     data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-DROP TABLE usuarios;
-
 CREATE TABLE pokemons (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(50),
@@ -177,7 +174,7 @@ CREATE TABLE progresso (
     starter VARCHAR(20),
     ginasios_completos INT DEFAULT 0,
     total_capturados INT DEFAULT 0,
-    FOREIGN KEY (id_usuario) REFERENCES usuarios(id)
+    FOREIGN KEY (id_usuario) REFERENCES usuarios (id)
 );
 
 -- GINÁSIOS
@@ -186,44 +183,66 @@ CREATE TABLE ginasios (
     nome VARCHAR(50),
     lider VARCHAR(50)
 );
+INSERT INTO ginasios (nome, lider) VALUES
+('Pewter City', 'Brock'),
+('Cerulean City', 'Misty'),
+('Vermilion City', 'Lt. Surge'),
+('Celadon City', 'Erika'),
+('Fuchsia City', 'Koga'),
+('Saffron City', 'Sabrina'),
+('Cinnabar Island', 'Blaine'),
+('Viridian City', 'Giovanni');
 
 -- PROGRESSO NOS GINÁSIOS
 CREATE TABLE usuario_ginasios (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    id_usuario INT UNIQUE,
-    id_ginasio INT UNIQUE,
+    id_usuario INT,
+    id_ginasio INT,
     concluido BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (id_usuario) REFERENCES usuarios(id),
     FOREIGN KEY (id_ginasio) REFERENCES ginasios(id)
 );
-
+ALTER TABLE usuario_ginasios 
+ADD UNIQUE KEY unico_usuario_ginasio (id_usuario, id_ginasio);
 -- POKÉMONS DO USUÁRIO
 CREATE TABLE usuario_pokemons (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    id_usuario INT UNIQUE,
-    id_pokemon INT UNIQUE,
+    id_usuario INT,
+    id_pokemon INT,
     FOREIGN KEY (id_usuario) REFERENCES usuarios(id),
     FOREIGN KEY (id_pokemon) REFERENCES pokemons(id)
 );
-
+select * from usuario_pokemons;
 CREATE TABLE times (
     id INT AUTO_INCREMENT PRIMARY KEY,
     id_usuario INT,
     nome_time VARCHAR(50),
     FOREIGN KEY (id_usuario) REFERENCES usuarios(id)
 );
-
+INSERT INTO times (id_usuario, nome_time)
+VALUES (1, 'Time Principal');
+select * from times;
 -- POKÉMONS DOS TIMES
 CREATE TABLE time_pokemons (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    id_time INT UNIQUE,
+    id_time INT,
     id_pokemon INT UNIQUE,
     FOREIGN KEY (id_time) REFERENCES times(id),
     FOREIGN KEY (id_pokemon) REFERENCES pokemons(id)
 );
+drop table time_pokemons;
+select * from time_pokemons;
+INSERt INTO time_pokemons (id_time, id_pokemon) VALUES
+(1, 91);
 
-INSERT INTO times (id_usuario, nome_time)
-VALUES (1, 'Time Principal');
+select * from usuarios;
+CREATE TABLE historico_progresso (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT,
+    porcentagem INT,
+    data_registro DATE DEFAULT (CURRENT_DATE),
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id),
+    UNIQUE KEY unico_usuario_dia (id_usuario, data_registro)
+);
 
-select* from usuarios;
-
+SELECT * FROM usuario_ginasios WHERE id_usuario = 1;

@@ -24,6 +24,7 @@ p,span,a {
 
 .layout-dashboard {
     display: flex;
+    align-items: flex-start;
 }
 
 
@@ -34,6 +35,7 @@ p,span,a {
     display: flex;
     flex-direction: column;
     gap: 40px;
+    top: 0;
     position: sticky;
     background: #071121e0;
     border-right: 2px solid #7caaff2e;
@@ -48,7 +50,7 @@ p,span,a {
 
 .sidebar-label {
     color: #fff4b8;
-    font-size: 20px;
+    font-size: 30px;
 }
 
 .sidebar-nome {
@@ -190,4 +192,9 @@ canvas {
 
 .painel h2 {
     font-size: 25px;
+}
+
+.painel-largo {
+    width: 100%;
+    margin-bottom: 50px;
 }

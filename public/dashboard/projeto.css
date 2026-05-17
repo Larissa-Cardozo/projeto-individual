@@ -1,10 +1,10 @@
-* {
+*{
     box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
 
-body {
+body{
     font-family: "Press Start 2P", sans-serif;
     color: #f4f7ff;
 
@@ -13,163 +13,111 @@ body {
         linear-gradient(180deg, #10233f 0%, #0b1830 45%, #091322 100%);
 }
 
-a {
+a{
     text-decoration: none;
 }
-
-h1,
-h2,
-h3 {
+h1, h2, h3{
     color: #fff4b8;
     line-height: 1.5;
 }
-
-p,
-span,
-a,
-input,
-select,
-button {
+p, span, a, input, select, button{
     font-family: "Telex", sans-serif;
 }
 
-/* LAYOUT */
 
-.layout-dashboard {
+.layout-dashboard{
     display: flex;
 }
 
-/* SIDEBAR */
 
-.sidebar {
+.sidebar{
     width: 320px;
     height: 100vh;
-
     padding: 28px;
-
     display: flex;
     flex-direction: column;
     gap: 40px;
-
     position: sticky;
     top: 0;
-
     background: #071121e0;
-
     border-right: 2px solid #7caaff2e;
 }
-
-.sidebar-topo {
+.sidebar-topo{
     display: flex;
     flex-direction: column;
     gap: 14px;
-
     margin-top: 30%;
-
     text-align: center;
 }
-
-.sidebar-label {
+.sidebar-label{
     color: #fff4b8;
-    font-size: 20px;
+    font-size: 30px;
 }
-
-.sidebar-nome {
+.sidebar-nome{
     font-size: 40px;
     color: white;
 }
-
-.sidebar-descricao {
+.sidebar-descricao{
     color: #dce9ff;
     font-size: 18px;
     line-height: 1.6;
 }
-
-.sidebar-nav {
+.sidebar-nav{
     display: flex;
     flex-direction: column;
     gap: 25px;
-
     margin-top: 50%;
 }
 
-.nav-link {
+.nav-link{
     padding: 22px 18px;
-
     border-radius: 20px;
-
     background: #ffffff0a;
-
     border: 1px solid;
-
     color: #fff4b8;
-
     font-size: 18px;
-
     transition: 0.2s;
-
     text-align: center;
 }
-
-.nav-link:hover {
+.nav-link:hover{
     transform: translateX(3px);
-
     border-color: #ffcd05b9;
 }
-
-.nav-link.ativo {
-    background:
-        linear-gradient(
-            135deg,
-            rgba(125, 220, 255, 0.18),
-            rgba(255, 203, 5, 0.22)
-        );
-
+.nav-link.ativo{
+    background:linear-gradient(135deg,rgba(125, 220, 255, 0.18),rgba(255, 203, 5, 0.22));
     border-color: rgba(255, 203, 5, 0.34);
-
     color: white;
 }
 
-.conteudo-principal {
+.conteudo-principal{
     padding-top: 3%;
     padding-left: 5%;
     padding-right: 3%;
-
     display: flex;
     flex-direction: column;
     gap: 40px;
-
     width: 100%;
 }
 
-.cabecalho-pagina {
+.cabecalho-pagina{
     display: flex;
     gap: 40px;
 }
 
-.cabecalho-texto,
-.card-p,
-.card-metrica,
-.painel {
+.card-p,.card-metrica,.painel {
     border-radius: 28px;
-
-    background:
-        radial-gradient(circle at right, rgba(255, 205, 5, 0.171), transparent 70%),
+    background:radial-gradient(circle at right, rgba(255, 205, 5, 0.171), transparent 70%),
         linear-gradient(180deg, #10233f 0%, #0b1830 45%, #091322 100%);
-
     border: 1px solid rgba(255, 255, 255, 0.322);
 }
 
 .cabecalho-texto {
     padding: 30px;
-
     display: flex;
     flex-direction: column;
     justify-content: center;
     gap: 20px;
-
     height: 200px;
-    width: 100%;
 }
 
 .cabecalho-texto h1 {
@@ -192,8 +140,7 @@ button {
     gap: 16px;
 }
 
-.card-p p,
-.card-p span {
+.card-p p, .card-p span {
     font-size: 25px;
 }
 
@@ -201,8 +148,6 @@ button {
     font-size: 40px;
     color: #ffcb05;
 }
-
-/* PAINÉIS */
 
 .graficos-grid {
     display: flex;
@@ -212,20 +157,22 @@ button {
 .painel {
     width: 100%;
     padding: 26px;
-
     display: flex;
     flex-direction: column;
     gap: 20px;
+}
+.painel-inicial h2{
+    margin-bottom: 50px;
+}
+.painel-final{
+    margin-bottom: 40px;
 }
 
 .painel h2 {
     font-size: 25px;
 }
 
-/* FORMULÁRIOS */
-
-.form-pokemon,
-.form-time {
+.form-pokemon, .form-time {
     display: flex;
     gap: 14px;
     flex-wrap: wrap;
@@ -261,8 +208,6 @@ select option {
     color: white;
 }
 
-/* BOTÕES */
-
 .botao {
     padding: 16px 22px;
     border-radius: 16px;
@@ -288,8 +233,6 @@ select option {
     flex-direction: column;
     gap: 14px;
 }
-
-/* CARD TIPO */
 
 .tipo-destaque {
     padding: 20px;

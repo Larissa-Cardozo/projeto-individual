@@ -21,7 +21,7 @@
                 <span class="sidebar-label">Treinador:</span>
                 <span class="sidebar-nome" id="b_usuario">usuario</span>
 
-                <p class="sidebar-descricao">Acompanhe aqui seu progresso!</p>
+                <p class="sidebar-descricao">Bem-vindo de volta!</p>
             </div>
 
             <nav class="sidebar-nav">
@@ -69,7 +69,7 @@
 
             <div class="graficos-grid">
                 <div class="painel">
-                    <h2>Gráfico de progresso</h2>
+                    <h2>Progresso geral do jogo</h2>
                     <canvas id="graficoProgresso"></canvas>
                 </div>
 
@@ -78,6 +78,10 @@
                     <canvas id="graficoTipos"></canvas>
                 </div>
             </div>
+            <div class="painel painel-largo">
+                    <h2>Evolução da jornada em Kanto</h2>
+                    <canvas id="graficoHistorico"></canvas>
+                </div>
         </main>
 
     </div>
@@ -90,6 +94,7 @@
     window.onload = function() {
         obterDadosKpi();
         obterDadosRadar();
+        obterDadosHistorico();
     }
 
     // ─── KPIs + Gráfico de Barras ───────────────────────────────────────
@@ -128,7 +133,7 @@
         document.getElementById("kpiGinasios").innerHTML =
             dados.ginasios_concluidos + "/8";
         document.getElementById("kpiCapturas").innerHTML =
-            dados.total_capturados;
+            dados.total_capturados + "/150";
         document.getElementById("conclusaoGeral").innerHTML =
             dados.conclusao_geral + "%";
 
@@ -213,7 +218,6 @@
                 }]
             },
             options: {
-                maintainAspectRatio: false,
                 plugins: {
                     legend: { display: false }
                 },
@@ -235,9 +239,6 @@
                         ticks: {
                             color: "#ffffff",
                             font: { size: 14 }
-                        },
-                        grid: {
-                            display: false
                         }
                     }
                 }
@@ -371,14 +372,9 @@ function colorirCardTipo(contagem) {
                 }]
             },
             options: {
-                maintainAspectRatio: false,
                 plugins: {
                     legend: {
-                        display: true,
-                        labels: {
-                            color: "#ffffff",
-                            font: { size: 14 }
-                        }
+                        display: false
                     }
                 },
                 scales: {
@@ -394,7 +390,7 @@ function colorirCardTipo(contagem) {
                         },
                         pointLabels: {
                             color: "#ffffff",
-                            font: { size: 13 }
+                            font: { size: 18 }
                         },
                         angleLines: {
                             color: "rgba(255, 255, 255, 0.3)"
@@ -404,4 +400,153 @@ function colorirCardTipo(contagem) {
             }
         });
     }
+
+    function registrarHistorico() {
+    fetch(`/dashboard/dados/${sessionStorage.ID_USUARIO}`)
+        .then(function(resposta) {
+            return resposta.json();
+        })
+        .then(function(dados) {
+            fetch("/dashboard/historico/registrar", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    idUsuario: sessionStorage.ID_USUARIO,
+                    porcentagem: dados.conclusao_geral
+                })
+            }) 
+            .then(function(resposta) {
+                console.log("Histórico registrado:", resposta.status);
+            })
+            .catch(function(erro) {
+                console.log(erro);
+            });
+        })
+        .catch(function(erro) {
+            console.log(erro);
+        });
+}
+
+function obterDadosHistorico() {
+    var idUsuario = sessionStorage.ID_USUARIO;
+
+    fetch(`/dashboard/historico/${idUsuario}`)
+        .then(function(resposta) {
+            return resposta.json();
+        })
+        .then(function(registros) {
+            var ultimos5 = registros.slice(-5);
+
+            while (ultimos5.length < 5) {
+                ultimos5.unshift({ data_registro: "-", porcentagem: 0 });
+            }
+
+            plotarGraficoHistorico(ultimos5);
+        })
+        .catch(function(erro) {
+            console.log(erro);
+        });
+}
+
+function plotarGraficoHistorico(registros) {
+    var labels = registros.map(function(r) {
+        if (r.data_registro === "-") {
+            return "-";
+        } else {
+            return r.data_registro.substring(0, 10);
+        }
+    });
+    
+    var dados = registros.map(function(r) { return r.porcentagem; });
+
+    var estruturaDados = {
+        labels: labels,
+        datasets: [{
+            label: "Progresso geral por dia",
+            data: dados,
+            borderColor: "#ffcb05",
+            pointBackgroundColor: "#ffcb05"
+        }]
+    };
+
+    var grafico = new Chart(document.getElementById("graficoHistorico"), {
+        type: "line",
+        data: estruturaDados,
+        options: {
+            plugins: {
+                legend: {
+                    labels: {
+                        color: "#ffffff",
+                        font: { size: 18 }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    ticks: {
+                        color: "#ffffff",
+                        font: { size: 15 },
+                        callback: function(valor) {
+                            return valor + "%";
+                        }
+                    },
+                    grid: {
+                        color: "rgba(255, 255, 255, 0.1)"
+                    }
+                },
+                x: {
+                    ticks: {
+                        color: "#ffffff",
+                        font: { size: 15 }
+                    }
+                }
+            }
+        }
+    });
+
+    setTimeout(function() {
+        atualizarGraficoHistorico(estruturaDados, grafico);
+    }, 5000);
+}
+
+function atualizarGraficoHistorico(estruturaDados, grafico) {
+    var idUsuario = sessionStorage.ID_USUARIO;
+
+    fetch(`/dashboard/historico/${idUsuario}`)
+        .then(function(resposta) {
+            return resposta.json();
+        })
+        .then(function(registros) {
+            var ultimos5 = registros.slice(-5);
+
+            while (ultimos5.length < 5) {
+                ultimos5.unshift({ data_registro: "-", porcentagem: 0 });
+            }
+
+            var novaLabel;
+            if (ultimos5[4].data_registro === "-") {
+                novaLabel = "-";
+            } else {
+                novaLabel = ultimos5[4].data_registro.substring(0, 10);
+            }
+            var novoValor = ultimos5[4].porcentagem;
+
+            if (novaLabel !== estruturaDados.labels[estruturaDados.labels.length - 1]) {
+                estruturaDados.labels.shift();
+                estruturaDados.labels.push(novaLabel);
+                estruturaDados.datasets[0].data.shift();
+                estruturaDados.datasets[0].data.push(novoValor);
+                grafico.update();
+            }
+
+            setTimeout(function() {
+                atualizarGraficoHistorico(estruturaDados, grafico);
+            }, 5000);
+        })
+        .catch(function(erro) {
+            console.log(erro);
+        });
+}
 </script>

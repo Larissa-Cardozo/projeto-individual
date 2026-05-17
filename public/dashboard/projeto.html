@@ -44,7 +44,7 @@
         </div>
 
         <div class="graficos-grid">
-            <div class="painel">
+            <div class="painel painel-inicial">
                 <h2>Escolha o inicial</h2>
                 <select id="selectInicial"></select>
                 <button onclick="salvarInicial()" class="botao">
@@ -59,14 +59,14 @@
         </div>
 
         <div class="graficos-grid">
-            <div class="painel">
+            <div class="painel painel-final">
                 <h2>Pokémon capturados</h2>
                     <select id="selectCaptura"></select>
                     <button onclick="capturarPokemon()" class="botao">Adicionar captura</button>
                 <div id="capturadosLista" class="pokemon-lista"></div>
 
             </div>
-            <div class="painel">
+            <div class="painel painel-final">
                 <h2>Monte seu time</h2>
                     <select id="pokemonTimeSelect"></select>
 
@@ -75,11 +75,6 @@
                     </button>
                 <div id="timeLista" class="time-lista"></div>
             </div>
-        </div>
-
-        <div class="painel">
-            <p class="mensagem-apoio">Clique aqui sempre que quiser atualizar seu progresso.</p>    
-            <button id="botaoSalvar" class="botao" onclick="salvarDashboard()">Salvar progresso</button>
         </div>
     </main>
 </div>
@@ -204,6 +199,7 @@
         .then(function(resposta) {
             if (resposta.ok) {
                 obterCapturados();
+                registrarHistorico();
                 alert("Pokemon capturado com sucesso!");
             } else {
                 console.log("Não foi possível capturar o pokemon");
@@ -277,8 +273,6 @@
                 tipoDominante = tipo;
             }
         }
-
-        document.getElementById("tipoMaisPresentePainel").innerHTML = tipoDominante;
     }
 
     function adicionarAoTime() {
@@ -306,6 +300,7 @@
         .then(function(resposta) {
             if (resposta.ok) {
                 obterTime();
+                registrarHistorico();
                 alert("Pokemon adicionado ao time!");
             } else {
                 console.log("Erro ao adicionar pokemon");
@@ -328,6 +323,7 @@
         .then(function(resposta) {
             if (resposta.ok) {
                 obterTime();
+                registrarHistorico();
             } else {
                 console.log("Erro ao remover pokemon do time");
             }
@@ -358,6 +354,7 @@
         })
         .then(function(resposta) {
             if (resposta.ok) {
+                registrarHistorico()
                 alert("Inicial salvo com sucesso!");
             } else {
                 console.log("Erro ao salvar starter");
@@ -415,12 +412,37 @@
             })
         })
         .then(function(resposta) {
-            if (!resposta.ok) {
+            if (resposta.ok) {
+                registrarHistorico();
+            } else {
                 console.log("Erro ao atualizar ginásio");
             }
         })
         .catch(function(erro) {
             console.log(erro);
         });
+    }
+
+    function registrarHistorico() {
+        fetch(`/dashboard/dados/${sessionStorage.ID_USUARIO}`)
+            .then(function(resposta) {
+                return resposta.json();
+            })
+            .then(function(dados) {
+                fetch("/dashboard/historico/registrar", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        idUsuario: sessionStorage.ID_USUARIO,
+                        porcentagem: dados.conclusao_geral
+                    })
+                })
+                .catch(function(erro) {
+                    console.log(erro);
+                });
+            })
+            .catch(function(erro) {
+                console.log(erro);
+            });
     }
 </script>

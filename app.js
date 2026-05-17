@@ -21,7 +21,6 @@ var dashboardRouter = require("./src/routes/dashboard");
 var pokemonRouter = require("./src/routes/pokemon");
 var ginasiosRouter = require("./src/routes/ginasios");
 
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));

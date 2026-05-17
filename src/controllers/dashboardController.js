@@ -26,7 +26,36 @@ function buscarTipoDominante(req, res) {
         });
 }
 
+function registrarHistorico(req, res) {
+    var idUsuario = req.body.idUsuario;
+    var porcentagem = req.body.porcentagem;
+
+    dashboardModel.registrarHistorico(idUsuario, porcentagem)
+        .then(function() {
+            res.status(200).send("Histórico registrado!");
+        })
+        .catch(function(erro) {
+            console.log(erro);
+            res.status(500).json(erro);
+        });
+}
+
+function buscarHistorico(req, res) {
+    var idUsuario = req.params.idUsuario;
+
+    dashboardModel.buscarHistorico(idUsuario)
+        .then(function(resultado) {
+            res.json(resultado);
+        })
+        .catch(function(erro) {
+            console.log(erro);
+            res.status(500).json(erro);
+        });
+}
+
 module.exports = {
     buscarDados,
-    buscarTipoDominante
+    buscarTipoDominante,
+    registrarHistorico,
+    buscarHistorico
 };

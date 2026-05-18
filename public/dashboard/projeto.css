@@ -29,7 +29,6 @@ p, span, a, input, select, button{
     display: flex;
 }
 
-
 .sidebar{
     width: 320px;
     height: 100vh;
@@ -98,7 +97,6 @@ p, span, a, input, select, button{
     gap: 40px;
     width: 100%;
 }
-
 .cabecalho-pagina{
     display: flex;
     gap: 40px;
@@ -110,7 +108,6 @@ p, span, a, input, select, button{
         linear-gradient(180deg, #10233f 0%, #0b1830 45%, #091322 100%);
     border: 1px solid rgba(255, 255, 255, 0.322);
 }
-
 .cabecalho-texto {
     padding: 30px;
     display: flex;
@@ -119,11 +116,9 @@ p, span, a, input, select, button{
     gap: 20px;
     height: 200px;
 }
-
 .cabecalho-texto h1 {
     font-size: 30px;
 }
-
 .cabecalho-texto p {
     font-size: 20px;
     line-height: 1.6;
@@ -131,9 +126,7 @@ p, span, a, input, select, button{
 
 .card-p {
     width: 360px;
-
     padding: 28px;
-
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -171,13 +164,6 @@ p, span, a, input, select, button{
 .painel h2 {
     font-size: 25px;
 }
-
-.form-pokemon, .form-time {
-    display: flex;
-    gap: 14px;
-    flex-wrap: wrap;
-}
-
 input, select {
     padding: 16px 18px;
     border-radius: 16px;
@@ -185,22 +171,11 @@ input, select {
     background: rgba(255, 255, 255, 0.08);
     color: white;
     font-size: 18px;
-    outline: none;
     transition: 0.2s;
-}
-
-input {
-    flex: 1;
-}
-
-select {
-    min-width: 180px;
-    cursor: pointer;
 }
 
 input:focus, select:focus {
     border-color: #ffcb05;
-    box-shadow: 0 0 10px rgba(255, 203, 5, 0.25);
 }
 
 select option {
@@ -227,39 +202,10 @@ select option {
     background: rgba(255, 255, 255, 0.08);
 }
 
-
 .starter-grid, .ginasios-lista, .pokemon-lista, .time-lista {
     display: flex;
     flex-direction: column;
     gap: 14px;
-}
-
-.tipo-destaque {
-    padding: 20px;
-
-    border-radius: 20px;
-
-    background: rgba(255, 255, 255, 0.05);
-
-    border: 1px solid rgba(255, 255, 255, 0.2);
-
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.tipo-destaque span {
-    font-size: 20px;
-}
-
-.mensagem-apoio {
-    font-size: 18px;
-    text-align: center;
-}
-
-canvas {
-    width: 100%;
-    height: 100%;
 }
 .botao-remover{
     padding: 5px 15px;

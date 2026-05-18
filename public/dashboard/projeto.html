@@ -82,56 +82,63 @@
 </html>
 
 <script>
+    // Exibe o nome do usuário logado na sidebar, buscando do sessionStorage
     b_usuario.innerHTML = sessionStorage.NOME_USUARIO;
 
+    // Variável global que guarda o estado atual da dashboard epra eu consultar mais facil dps
     let dashboardAtual = {
         capturados: [],
         timeAtual: []
     };
 
+    // quando a página carregar chama as funcoes
     window.onload = function() {
-        obterPokemons();
-        obterCapturados();
-        obterTime();
-        obterGinasios();
+        obterPokemons();    // carrega os selects de captura e inicial
+        obterCapturados();  // carrega a lista de pokémons capturados
+        obterTime();        // carrega o time atual
+        obterGinasios();    // carrega a lista de ginásios com os checkboxs
     }
 
     // ─── POKÉMONS ───────────────────────────────────────────────────────
 
+    // Busca todos os pokémons do banco pela rota e repassa para as funções
     function obterPokemons() {
-        fetch("/pokemon/listarTodos")
+        fetch("/pokemon/listarTodos", { cache: 'no-store' })
             .then(function(resposta) {
-                return resposta.json();
-            })
-            .then(function(pokemons) {
-                renderizarSelectCaptura(pokemons);
-                renderizarSelectInicial(pokemons);
+                if (resposta.ok) {
+                    resposta.json().then(function(pokemons) {
+                        console.log(`Dados recebidos: ${JSON.stringify(pokemons)}`);
+                        renderizarSelectCaptura(pokemons); // monta o select de captura
+                        renderizarSelectInicial(pokemons); // monta o select do inicial
+                    });
+                } else {
+                    console.error('Nenhum dado encontrado ou erro na API');
+                }
             })
             .catch(function(erro) {
-                console.log(erro);
+                console.error(`Erro na obtenção dos pokémons: ${erro.message}`);
             });
     }
 
-    function renderizarSelectCaptura(pokemons) {
+    // Monta o select de captura para cada pokemon com nome e tipo
+    function renderizarSelectCaptura(pokemons){
         var select = document.getElementById("selectCaptura");
         select.innerHTML = `<option value="">Selecione um pokemon</option>`;
 
-        pokemons.forEach(function(pokemon) {
+        pokemons.forEach(function(pokemon){
             select.innerHTML += `<option value="${pokemon.id}">
                                     ${pokemon.nome} - ${pokemon.tipo}
                                  </option>`;
         });
     }
 
+    // Monta o select do inicial filtrando apenas os três
     function renderizarSelectInicial(pokemons) {
         var select = document.getElementById("selectInicial");
         select.innerHTML = `<option value="">Escolha seu inicial</option>`;
 
         pokemons.forEach(function(pokemon) {
-            if (pokemon.nome === "Bulbassauro" ||
-                pokemon.nome === "Charmander" ||
-                pokemon.nome === "Squirtle"
-            ) {
+            if (pokemon.nome === "Bulbassauro" || pokemon.nome === "Charmander" || pokemon.nome === "Squirtle"){
                 select.innerHTML += `<option value="${pokemon.id}">
                                         ${pokemon.nome}
                                      </option>`;
@@ -141,24 +148,31 @@
 
     // ─── CAPTURADOS ─────────────────────────────────────────────────────
 
+    // Busca os pokémons capturados pelo usuário na rota, salva na dashboardAtual.capturados
+    // e chama as funções de renderização
     function obterCapturados() {
-        fetch(`/pokemon/capturados/${sessionStorage.ID_USUARIO}`)
+        fetch(`/pokemon/capturados/${sessionStorage.ID_USUARIO}`, { cache: 'no-store' })
             .then(function(resposta) {
-                return resposta.json();
-            })
-            .then(function(pokemons) {
-                dashboardAtual.capturados = pokemons;
-                renderizarListaCapturados();
-                renderizarSelectTime();
+                if (resposta.ok) {
+                    resposta.json().then(function(pokemons) {
+                        console.log(`Dados recebidos: ${JSON.stringify(pokemons)}`);
+                        dashboardAtual.capturados = pokemons;
+                        renderizarListaCapturados();  // exibe os cards na tela
+                        renderizarSelectTime();       // atualiza o select do time
+                    });
+                } else {
+                    console.error('Nenhum dado encontrado ou erro na API');
+                }
             })
             .catch(function(erro) {
-                console.log(erro);
+                console.error(`Erro na obtenção dos capturados: ${erro.message}`);
             });
     }
 
+    // renderiza os cards dos pokémons capturados na div capturadosLista
     function renderizarListaCapturados() {
         var container = document.getElementById("capturadosLista");
-        container.innerHTML = "";
+        container.innerHTML = ""; // limpa antes de renderizar
 
         dashboardAtual.capturados.forEach(function(pokemon) {
             container.innerHTML += `
@@ -170,24 +184,29 @@
         });
     }
 
+    // Chamada quando o usuário clica em "Adicionar captura" e valida se selecionou um pokémon e se ele já foi capturado
     function capturarPokemon() {
         var select = document.getElementById("selectCaptura");
         var idPokemon = select.value;
 
-        if (idPokemon == "") {
+        // impede captura sem pokémon selecionado
+        if(idPokemon == ""){
             alert("Selecione um pokemon");
             return;
         }
 
+        // verifica se o pokémon já está na lista de capturados
+        // usando .some() que retorna true se encontrar ao menos um igual
         var jaCapturado = dashboardAtual.capturados.some(function(pokemon) {
             return pokemon.id == idPokemon;
         });
 
-        if (jaCapturado) {
+        if(jaCapturado){
             alert("Você já capturou esse pokémon!");
             return;
         }
 
+        // envia o id do usuário e do pokémon pra o back registrar a captura
         fetch("/pokemon/capturar", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -198,35 +217,41 @@
         })
         .then(function(resposta) {
             if (resposta.ok) {
-                obterCapturados();
-                registrarHistorico();
+                obterCapturados();    // atualiza a lista na tela
+                registrarHistorico(); // salva o progresso do dia no banco
                 alert("Pokemon capturado com sucesso!");
             } else {
-                console.log("Não foi possível capturar o pokemon");
+                console.error("Não foi possível capturar o pokemon");
             }
         })
         .catch(function(erro) {
-            console.log(erro);
+            console.error(`Erro ao capturar pokemon: ${erro.message}`);
         });
     }
 
     // ─── TIME ────────────────────────────────────────────────────────────
 
+    // Busca os pokémons do time atual pelo suuario na rota e salva na dashboardAtual.timeAtual
+    // e chama as funções de renderização
     function obterTime() {
-        fetch(`/pokemon/timeAtual/${sessionStorage.ID_USUARIO}`)
+        fetch(`/pokemon/timeAtual/${sessionStorage.ID_USUARIO}`, { cache: 'no-store' })
             .then(function(resposta) {
-                return resposta.json();
-            })
-            .then(function(pokemons) {
-                dashboardAtual.timeAtual = pokemons;
-                renderizarTime();
-                atualizarTipoDominante();
+                if (resposta.ok) {
+                    resposta.json().then(function(pokemons) {
+                        console.log(`Dados recebidos: ${JSON.stringify(pokemons)}`);
+                        dashboardAtual.timeAtual = pokemons; 
+                        renderizarTime();  // exibe os cards na tela
+                    });
+                } else {
+                    console.error('Nenhum dado encontrado ou erro na API');
+                }
             })
             .catch(function(erro) {
-                console.log(erro);
+                console.error(`Erro na obtenção do time: ${erro.message}`);
             });
     }
 
+    // Monta o select do time com os pokémons capturados pelo usuário
     function renderizarSelectTime() {
         var select = document.getElementById("pokemonTimeSelect");
         select.innerHTML = `<option value="">Selecione um pokemon</option>`;
@@ -238,9 +263,11 @@
         });
     }
 
+    // Renderiza os cards do time na div timeLista
+    // Cada card tem botão de remover que chama removerDoTime()
     function renderizarTime() {
         var container = document.getElementById("timeLista");
-        container.innerHTML = "";
+        container.innerHTML = ""; // limpa antes de renderizar
 
         dashboardAtual.timeAtual.forEach(function(pokemon) {
             container.innerHTML += `
@@ -255,40 +282,24 @@
         });
     }
 
-    function atualizarTipoDominante() {
-        var contagem = {};
-        dashboardAtual.timeAtual.forEach(function(pokemon) {
-            if (contagem[pokemon.tipo]) {
-                contagem[pokemon.tipo]++;
-            } else {
-                contagem[pokemon.tipo] = 1;
-            }
-        });
-
-        var tipoDominante = "Sem time";
-        var maior = 0;
-        for (var tipo in contagem) {
-            if (contagem[tipo] > maior) {
-                maior = contagem[tipo];
-                tipoDominante = tipo;
-            }
-        }
-    }
-
+    // Chamada quando o usuário clica em Adicionar ao time e valida se selecionou um pokémon e se o time não está cheio
     function adicionarAoTime() {
         var select = document.getElementById("pokemonTimeSelect");
         var idPokemon = select.value;
 
+        // impede adição sem pokémon selecionado
         if (idPokemon == "") {
             alert("Selecione um pokemon para adicionar");
             return;
         }
 
+        // verifica o tamanho do time — máximo 6 pokémons
         if (dashboardAtual.timeAtual.length >= 6) {
             alert("Seu time já está cheio! Máximo de 6 pokémons.");
             return;
         }
 
+        // envia o id do time (sempre 1 — time principal) e do pokémon
         fetch("/pokemon/time", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -299,18 +310,19 @@
         })
         .then(function(resposta) {
             if (resposta.ok) {
-                obterTime();
-                registrarHistorico();
+                obterTime();          // atualiza o time na tela
+                registrarHistorico(); // salva o progresso do dia no banco
                 alert("Pokemon adicionado ao time!");
             } else {
-                console.log("Erro ao adicionar pokemon");
+                console.error("Erro ao adicionar pokemon");
             }
         })
         .catch(function(erro) {
-            console.log(erro);
+            console.error(`Erro ao adicionar ao time: ${erro.message}`);
         });
     }
 
+    // Chamada quando o usuário clica em "Remover" em um card do time e faz o delete
     function removerDoTime(idPokemon) {
         fetch("/pokemon/time/remover", {
             method: "DELETE",
@@ -322,28 +334,31 @@
         })
         .then(function(resposta) {
             if (resposta.ok) {
-                obterTime();
-                registrarHistorico();
+                obterTime();          // atualiza o time na tela
+                registrarHistorico(); // salva o progresso do dia no banco
             } else {
-                console.log("Erro ao remover pokemon do time");
+                console.error("Erro ao remover pokemon do time");
             }
         })
         .catch(function(erro) {
-            console.log(erro);
+            console.error(`Erro ao remover do time: ${erro.message}`);
         });
     }
 
     // ─── INICIAL ─────────────────────────────────────────────────────────
 
+    // Chamada quando o usuário clica em "Escolher Inicial"
     function salvarInicial() {
         var select = document.getElementById("selectInicial");
         var idPokemon = select.value;
 
+        // impede salvar sem pokémon selecionado
         if (idPokemon == "") {
             alert("Escolha um pokemon inicial");
             return;
         }
 
+        // envia o id do usuário e do pokémon inicial escolhido
         fetch("/pokemon/inicial", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -354,45 +369,52 @@
         })
         .then(function(resposta) {
             if (resposta.ok) {
-                registrarHistorico()
+                registrarHistorico(); // salva o progresso do dia no banco
                 alert("Inicial salvo com sucesso!");
             } else {
-                console.log("Erro ao salvar starter");
+                console.error("Erro ao salvar starter");
             }
         })
         .catch(function(erro) {
-            console.log(erro);
+            console.error(`Erro ao salvar inicial: ${erro.message}`);
         });
     }
 
     // ─── GINÁSIOS ────────────────────────────────────────────────────────
 
+    // Busca os ginásios do usuário pela rota
     function obterGinasios() {
-        fetch(`/ginasios/${sessionStorage.ID_USUARIO}`)
+        fetch(`/ginasios/${sessionStorage.ID_USUARIO}`, { cache: 'no-store' })
             .then(function(resposta) {
-                return resposta.json();
-            })
-            .then(function(ginasios) {
-                renderizarGinasios(ginasios);
+                if (resposta.ok) {
+                    resposta.json().then(function(ginasios) {
+                        console.log(`Dados recebidos: ${JSON.stringify(ginasios)}`);
+                        renderizarGinasios(ginasios);
+                    });
+                } else {
+                    console.error('Nenhum dado encontrado ou erro na API');
+                }
             })
             .catch(function(erro) {
-                console.log(erro);
+                console.error(`Erro na obtenção dos ginásios: ${erro.message}`);
             });
     }
 
+    // Renderiza a lista de ginásios com checkboxes na div#ginasiosLista
+    // Se concluido = 1, o checkbox aparece marcado
+    // Cada checkbox chama atualizarGinasio() quando alterado
     function renderizarGinasios(ginasios) {
         var container = document.getElementById("ginasiosLista");
-        container.innerHTML = "";
+        container.innerHTML = ""; // limpa antes de renderizar
 
         ginasios.forEach(function(ginasio) {
+             var checado = "";
+            if (ginasio.concluido) {
+                checado = "checado";
+            }
             container.innerHTML += `
                 <div class="ginasio-item">
-                    <input 
-                        type="checkbox" 
-                        id="ginasio-${ginasio.id}"
-                        ${ginasio.concluido ? "checked" : ""}
-                        onchange="atualizarGinasio(${ginasio.id}, this.checked)"
-                    >
+                    <input type="checkbox" id="ginasio-${ginasio.id}" ${checado} onchange="atualizarGinasio(${ginasio.id}, this.checked)">
                     <label for="ginasio-${ginasio.id}">
                         ${ginasio.nome} — ${ginasio.lider}
                     </label>
@@ -401,6 +423,8 @@
         });
     }
 
+    // Chamada quando o usuário marca ou desmarca um checkbox de ginásio
+    // concluido = true quando marcado, false quando desmarcado
     function atualizarGinasio(idGinasio, concluido) {
         fetch("/ginasios/concluir", {
             method: "POST",
@@ -413,36 +437,54 @@
         })
         .then(function(resposta) {
             if (resposta.ok) {
-                registrarHistorico();
+                registrarHistorico(); // salva o progresso do dia no banco
             } else {
-                console.log("Erro ao atualizar ginásio");
+                console.error("Erro ao atualizar ginásio");
             }
         })
         .catch(function(erro) {
-            console.log(erro);
+            console.error(`Erro ao atualizar ginásio: ${erro.message}`);
         });
     }
 
+    // ─── HISTÓRICO ───────────────────────────────────────────────────────
+
+    // Chamada após cada ação do usuário que altera o progresso, primeiro busca a porcentagem atual pela rota e salva no banco
+    // O banco aceita apenas um registro por dia por usuário (UNIQUE KEY)
+    // então se já existir um registro hoje, ele é atualizado com o valor mais recente
     function registrarHistorico() {
-        fetch(`/dashboard/dados/${sessionStorage.ID_USUARIO}`)
+        fetch(`/dashboard/dados/${sessionStorage.ID_USUARIO}`, { cache: 'no-store' })
             .then(function(resposta) {
-                return resposta.json();
-            })
-            .then(function(dados) {
-                fetch("/dashboard/historico/registrar", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        idUsuario: sessionStorage.ID_USUARIO,
-                        porcentagem: dados.conclusao_geral
-                    })
-                })
-                .catch(function(erro) {
-                    console.log(erro);
-                });
+                if (resposta.ok) {
+                    resposta.json().then(function(dados) {
+                        console.log(`Porcentagem a registrar: ${dados.conclusao_geral}`);
+
+                        // usa a porcentagem calculada pelo banco na query de buscarDados
+                        fetch("/dashboard/historico/registrar", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                idUsuario: sessionStorage.ID_USUARIO,
+                                porcentagem: dados.conclusao_geral
+                            })
+                        })
+                        .then(function(resposta) {
+                            if (resposta.ok) {
+                                console.log("Histórico registrado com sucesso!");
+                            } else {
+                                console.error("Erro ao registrar histórico");
+                            }
+                        })
+                        .catch(function(erro) {
+                            console.error(`Erro ao registrar histórico: ${erro.message}`);
+                        });
+                    });
+                } else {
+                    console.error('Erro ao buscar dados para registrar histórico');
+                }
             })
             .catch(function(erro) {
-                console.log(erro);
+                console.error(`Erro ao registrar histórico: ${erro.message}`);
             });
     }
 </script>

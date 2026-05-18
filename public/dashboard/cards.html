@@ -89,44 +89,63 @@
 </html>
 
 <script>
+    // Exibe o nome do usuário logado na sidebar, buscando do sessionStorage
     b_usuario.innerHTML = sessionStorage.NOME_USUARIO;
 
+    // quando a página carregar chama as funcoes
     window.onload = function() {
-        obterDadosKpi();
-        obterDadosRadar();
-        obterDadosHistorico();
+        obterDadosKpi();       // carrega as KPIs e o gráfico de barras
+        obterDadosRadar();     // carrega o gráfico de radar com os tipos do time
+        obterDadosHistorico(); // carrega o gráfico de linha com o histórico de progresso
     }
 
-    // ─── KPIs + Gráfico de Barras ───────────────────────────────────────
+    // ─── KPIs e Gráfico de Barras ───────────────────────────────────────
 
+    // busca os dados principais do usuário no banco pela rota e GET /dashboard/tipoDominante/:idUsuario
+    // A função *obterDadosKpi* também invoca *exibirKpis* e *plotarGraficoBarras*
     function obterDadosKpi() {
         var idUsuario = sessionStorage.ID_USUARIO;
 
-        fetch(`/dashboard/dados/${idUsuario}`)
+        // busca inicial, ginásios concluídos, total capturados e porcentagem geral
+        fetch(`/dashboard/dados/${idUsuario}`, { cache: 'no-store' })
             .then(function(resposta) {
-                return resposta.json();
-            })
-            .then(function(dados) {
-                exibirKpis(dados);
-                plotarGraficoBarras(dados);
+                if (resposta.ok) {
+                    resposta.json().then(function(dados) {
+                        console.log(`Dados recebidos: ${JSON.stringify(dados)}`);
+                        exibirKpis(dados);          // atualiza os cards na tela
+                        plotarGraficoBarras(dados); // monta o gráfico de barras
+                    });
+                } else {
+                    console.error('Nenhum dado encontrado ou erro na API');
+                }
             })
             .catch(function(erro) {
-                console.log(erro);
+                console.error(`Erro na obtenção dos dados KPI: ${erro.message}`);
             });
 
-        fetch(`/dashboard/tipoDominante/${idUsuario}`)
+        // busca o tipo dominante do time separado pois vem de uma query diferente
+        fetch(`/dashboard/tipoDominante/${idUsuario}`, { cache: 'no-store' })
             .then(function(resposta) {
-                return resposta.json();
-            })
-            .then(function(dado) {
-                document.getElementById("kpiTipo").innerHTML =
-                    dado ? dado.tipo : "Sem time";
+                if (resposta.ok) {
+                    resposta.json().then(function(dado) {
+                        console.log(`Tipo dominante recebido: ${JSON.stringify(dado)}`);
+                        if (dado) {
+                            document.getElementById("kpiTipo").innerHTML = dado.tipo;
+                        } else {
+                            document.getElementById("kpiTipo").innerHTML = "Sem time";
+                        }
+                    });
+                } else {
+                    console.error('Nenhum dado encontrado ou erro na API');
+                }
             })
             .catch(function(erro) {
-                console.log(erro);
+                console.error(`Erro na obtenção do tipo dominante: ${erro.message}`);
             });
     }
 
+    // atualizaas KPIs na tela com os dados recebidos do banco
+    // também aplica cores dinâmicas nos cards de inicial e ginásios
     function exibirKpis(dados) {
         document.getElementById("kpiInicial").innerHTML =
             dados.inicial || "Não escolhido";
@@ -137,6 +156,7 @@
         document.getElementById("conclusaoGeral").innerHTML =
             dados.conclusao_geral + "%";
 
+        // aplica azul p squirtle, verde p bulbassauro, vermelho p charmander
         var cardInicial = document.getElementById("cardInicial");
 
         if (dados.inicial === "Squirtle") {
@@ -148,51 +168,51 @@
         } else if (dados.inicial === "Charmander") {
             cardInicial.style.borderColor = "#ff6b35";
             cardInicial.style.background = "radial-gradient(circle at right, rgba(255, 107, 53, 0.25), transparent 70%), linear-gradient(180deg, #10233f 0%, #0b1830 45%, #091322 100%)";
-        }    
+        }
 
+        // aplica cor ao card de ginásios em progressão de vermelho para verde
         var cardGinasios = document.getElementById("cardGinasios");
         var ginasios = dados.ginasios_concluidos;
 
-        if(ginasios === 0){
+        if (ginasios === 0) {
             cardGinasios.style.borderColor = "#ff0000";
-            cardGinasios.style.background =
-            "radial-gradient(circle at right, rgba(255, 0, 0, 0.25), transparent 70%), linear-gradient(180deg, #3f1010 0%, #301010 45%, #220909 100%)";
-        }else if(ginasios === 1){
+            cardGinasios.style.background = "radial-gradient(circle at right, rgba(255, 0, 0, 0.25), transparent 70%), linear-gradient(180deg, #3f1010 0%, #301010 45%, #220909 100%)";
+        } else if (ginasios === 1) {
             cardGinasios.style.borderColor = "#ff3300";
-            cardGinasios.style.background =
-            "radial-gradient(circle at right, rgba(255, 51, 0, 0.25), transparent 70%), linear-gradient(180deg, #3f1810 0%, #301410 45%, #221009 100%)";
-        }else if(ginasios === 2){
+            cardGinasios.style.background = "radial-gradient(circle at right, rgba(255, 51, 0, 0.25), transparent 70%), linear-gradient(180deg, #3f1810 0%, #301410 45%, #221009 100%)";
+        } else if (ginasios === 2) {
             cardGinasios.style.borderColor = "#ff6600";
-            cardGinasios.style.background =
-            "radial-gradient(circle at right, rgba(255, 102, 0, 0.25), transparent 70%), linear-gradient(180deg, #3f2210 0%, #301b10 45%, #221309 100%)";
-        }else if(ginasios === 3){
+            cardGinasios.style.background = "radial-gradient(circle at right, rgba(255, 102, 0, 0.25), transparent 70%), linear-gradient(180deg, #3f2210 0%, #301b10 45%, #221309 100%)";
+        } else if (ginasios === 3) {
             cardGinasios.style.borderColor = "#ff9900";
-            cardGinasios.style.background =
-            "radial-gradient(circle at right, rgba(255, 153, 0, 0.25), transparent 70%), linear-gradient(180deg, #3f2b10 0%, #302110 45%, #221809 100%)";
-        }else if(ginasios === 4){
+            cardGinasios.style.background = "radial-gradient(circle at right, rgba(255, 153, 0, 0.25), transparent 70%), linear-gradient(180deg, #3f2b10 0%, #302110 45%, #221809 100%)";
+        } else if (ginasios === 4) {
             cardGinasios.style.borderColor = "#ffcc00";
-            cardGinasios.style.background =
-            "radial-gradient(circle at right, rgba(255, 204, 0, 0.25), transparent 70%), linear-gradient(180deg, #3f3510 0%, #302810 45%, #221d09 100%)";
-        }else if(ginasios === 5){
+            cardGinasios.style.background = "radial-gradient(circle at right, rgba(255, 204, 0, 0.25), transparent 70%), linear-gradient(180deg, #3f3510 0%, #302810 45%, #221d09 100%)";
+        } else if (ginasios === 5) {
             cardGinasios.style.borderColor = "#ccff00";
-            cardGinasios.style.background =
-            "radial-gradient(circle at right, rgba(204, 255, 0, 0.25), transparent 70%), linear-gradient(180deg, #313f10 0%, #263010 45%, #1b2209 100%)";
-        }else if(ginasios === 6){
+            cardGinasios.style.background = "radial-gradient(circle at right, rgba(204, 255, 0, 0.25), transparent 70%), linear-gradient(180deg, #313f10 0%, #263010 45%, #1b2209 100%)";
+        } else if (ginasios === 6) {
             cardGinasios.style.borderColor = "#99ff00";
-            cardGinasios.style.background =
-            "radial-gradient(circle at right, rgba(153, 255, 0, 0.25), transparent 70%), linear-gradient(180deg, #263f10 0%, #1f3010 45%, #162209 100%)";
-        }else if(ginasios === 7){
+            cardGinasios.style.background = "radial-gradient(circle at right, rgba(153, 255, 0, 0.25), transparent 70%), linear-gradient(180deg, #263f10 0%, #1f3010 45%, #162209 100%)";
+        } else if (ginasios === 7) {
             cardGinasios.style.borderColor = "#66ff00";
-            cardGinasios.style.background =
-            "radial-gradient(circle at right, rgba(102, 255, 0, 0.25), transparent 70%), linear-gradient(180deg, #1c3f10 0%, #173010 45%, #112209 100%)";
-        }else if(ginasios === 8){
+            cardGinasios.style.background = "radial-gradient(circle at right, rgba(102, 255, 0, 0.25), transparent 70%), linear-gradient(180deg, #1c3f10 0%, #173010 45%, #112209 100%)";
+        } else if (ginasios === 8) {
             cardGinasios.style.borderColor = "#00ff00";
-            cardGinasios.style.background =
-            "radial-gradient(circle at right, rgba(102, 255, 0, 0.25), transparent 70%), linear-gradient(180deg, #1c3f10 0%, #173010 45%, #112209 100%)";
+            cardGinasios.style.background = "radial-gradient(circle at right, rgba(102, 255, 0, 0.25), transparent 70%), linear-gradient(180deg, #1c3f10 0%, #173010 45%, #112209 100%)";
         }
     }
 
+    // Monta o gráfico de barras com o progresso em porcentagem
+    // de cada categoria: inicial, ginásios e pokémons capturados
     function plotarGraficoBarras(dados) {
+        var porcentagemInicial;
+        if (dados.inicial) {
+            porcentagemInicial = 100;
+        } else {
+            porcentagemInicial = 0;
+        }
         new Chart(document.getElementById("graficoProgresso"), {
             type: "bar",
             data: {
@@ -200,8 +220,11 @@
                 datasets: [{
                     label: "Progresso",
                     data: [
-                        dados.inicial ? 100 : 0,
+                        // inicial vale 0% ou 100% dependendo se foi escolhido
+                        porcentagemInicial,
+                        // quantos dos 8 ginasios foram concluídos em porcentagem
                         Math.round(dados.ginasios_concluidos / 8 * 100),
+                        // quantos dos 150 pokemons foram capturados em porcentagem
                         Math.round(dados.total_capturados / 150 * 100)
                     ],
                     backgroundColor: [
@@ -248,104 +271,101 @@
 
     // ─── Radar ─────────────────────────────────────────────────────────
 
+    //busca os pokémons do time pela rota
     function obterDadosRadar() {
-    var idUsuario = sessionStorage.ID_USUARIO;
+        var idUsuario = sessionStorage.ID_USUARIO;
 
-    fetch(`/pokemon/timeAtual/${idUsuario}`)
-        .then(function(resposta) {
-            return resposta.json();
-        })
-        .then(function(pokemons) {
-            var contagem = contarTipos(pokemons);
-            plotarGraficoRadar(contagem);
-            colorirCardTipo(contagem);  // ✅ adiciona essa chamada
-        })
-        .catch(function(erro) {
-            console.log(erro);
-        });
-}
+        fetch(`/pokemon/timeAtual/${idUsuario}`, { cache: 'no-store' })
+            .then(function(resposta) {
+                if (resposta.ok) {
+                    resposta.json().then(function(pokemons) {
+                        console.log(`Dados recebidos: ${JSON.stringify(pokemons)}`);
+                        var contagem = contarTipos(pokemons); // conta quantos de cada tipo
+                        plotarGraficoRadar(contagem);         // monta o gráfico de radar
+                        colorirCardTipo(contagem);            // aplica cor ao card do tipo dominante
+                    });
+                } else {
+                    console.error('Nenhum dado encontrado ou erro na API');
+                }
+            })
+            .catch(function(erro) {
+                console.error(`Erro na obtenção dos dados do radar: ${erro.message}`);
+            });
+    }
 
-function colorirCardTipo(contagem) {
-    var cardTipo = document.getElementById("cardTipo");
+    // colore o card baseado no tipo com mais pokémons no time
+    function colorirCardTipo(contagem) {
+        var cardTipo = document.getElementById("cardTipo");
 
-    // descobre o tipo dominante
-    var tipoDominante = null;
-    var maior = 0;
-    for (var tipo in contagem) {
-        if (contagem[tipo] > maior) {
-            maior = contagem[tipo];
-            tipoDominante = tipo;
+        // percorre a contagem para encontrar o tipo com maior quantidade
+        var tipoDominante = null;
+        var maior = 0;
+        var tipos = Object.keys(contagem); // transforma um objeto em uma lista com os nomes das propriedades
+
+        for (var i = 0; i < tipos.length; i++) {
+            var tipo = tipos[i];
+            if (contagem[tipo] > maior) {
+                maior = contagem[tipo];
+                tipoDominante = tipo;
+            }
+        }
+
+        if (tipoDominante === "Fogo") {
+            cardTipo.style.borderColor = "#ff6b35";
+            cardTipo.style.background = "radial-gradient(circle at right, rgba(255, 107, 53, 0.25), transparent 70%), linear-gradient(180deg, #3f1c10 0%, #301610 45%, #221009 100%)";
+        } else if (tipoDominante === "Água") {
+            cardTipo.style.borderColor = "#64a0ff";
+            cardTipo.style.background = "radial-gradient(circle at right, rgba(100, 160, 255, 0.25), transparent 70%), linear-gradient(180deg, #10233f 0%, #101b30 45%, #091322 100%)";
+        } else if (tipoDominante === "Planta") {
+            cardTipo.style.borderColor = "#4CAF50";
+            cardTipo.style.background = "radial-gradient(circle at right, rgba(76, 175, 80, 0.25), transparent 70%), linear-gradient(180deg, #103f18 0%, #103016 45%, #09220f 100%)";
+        } else if (tipoDominante === "Elétrico") {
+            cardTipo.style.borderColor = "#ffcb05";
+            cardTipo.style.background = "radial-gradient(circle at right, rgba(255, 203, 5, 0.25), transparent 70%), linear-gradient(180deg, #3f3510 0%, #302810 45%, #221d09 100%)";
+        } else if (tipoDominante === "Psíquico") {
+            cardTipo.style.borderColor = "#ff69b4";
+            cardTipo.style.background = "radial-gradient(circle at right, rgba(255, 105, 180, 0.25), transparent 70%), linear-gradient(180deg, #3f1028 0%, #301020 45%, #220916 100%)";
+        } else if (tipoDominante === "Pedra") {
+            cardTipo.style.borderColor = "#b8a038";
+            cardTipo.style.background = "radial-gradient(circle at right, rgba(184, 160, 56, 0.25), transparent 70%), linear-gradient(180deg, #3a3210 0%, #2c2610 45%, #1f1b09 100%)";
+        } else if (tipoDominante === "Fantasma") {
+            cardTipo.style.borderColor = "#705898";
+            cardTipo.style.background = "radial-gradient(circle at right, rgba(112, 88, 152, 0.25), transparent 70%), linear-gradient(180deg, #22103f 0%, #1b1030 45%, #130922 100%)";
+        } else if (tipoDominante === "Veneno") {
+            cardTipo.style.borderColor = "#a040a0";
+            cardTipo.style.background = "radial-gradient(circle at right, rgba(160, 64, 160, 0.25), transparent 70%), linear-gradient(180deg, #32103f 0%, #261030 45%, #1b0922 100%)";
+        } else if (tipoDominante === "Terra") {
+            cardTipo.style.borderColor = "#e0c068";
+            cardTipo.style.background = "radial-gradient(circle at right, rgba(224, 192, 104, 0.25), transparent 70%), linear-gradient(180deg, #3f2f10 0%, #302410 45%, #221909 100%)";
+        } else if (tipoDominante === "Voador") {
+            cardTipo.style.borderColor = "#98d8d8";
+            cardTipo.style.background = "radial-gradient(circle at right, rgba(152, 216, 216, 0.25), transparent 70%), linear-gradient(180deg, #10353f 0%, #102930 45%, #091d22 100%)";
+        } else if (tipoDominante === "Inseto") {
+            cardTipo.style.borderColor = "#a8b820";
+            cardTipo.style.background = "radial-gradient(circle at right, rgba(168, 184, 32, 0.25), transparent 70%), linear-gradient(180deg, #313f10 0%, #263010 45%, #1b2209 100%)";
+        } else if (tipoDominante === "Normal") {
+            cardTipo.style.borderColor = "#a8a878";
+            cardTipo.style.background = "radial-gradient(circle at right, rgba(168, 168, 120, 0.25), transparent 70%), linear-gradient(180deg, #303018 0%, #252512 45%, #1a1a0c 100%)";
+        } else if (tipoDominante === "Lutador") {
+            cardTipo.style.borderColor = "#c03028";
+            cardTipo.style.background = "radial-gradient(circle at right, rgba(192, 48, 40, 0.25), transparent 70%), linear-gradient(180deg, #3f1410 0%, #301010 45%, #220909 100%)";
+        } else if (tipoDominante === "Gelo") {
+            cardTipo.style.borderColor = "#98d8d8";
+            cardTipo.style.background = "radial-gradient(circle at right, rgba(152, 216, 216, 0.25), transparent 70%), linear-gradient(180deg, #103a3f 0%, #102d30 45%, #091f22 100%)";
+        } else if (tipoDominante === "Dragão") {
+            cardTipo.style.borderColor = "#7038f8";
+            cardTipo.style.background = "radial-gradient(circle at right, rgba(112, 56, 248, 0.25), transparent 70%), linear-gradient(180deg, #1d103f 0%, #171030 45%, #100922 100%)";
+        } else if (tipoDominante === "Fada") {
+            cardTipo.style.borderColor = "#ee99ac";
+            cardTipo.style.background = "radial-gradient(circle at right, rgba(238, 153, 172, 0.25), transparent 70%), linear-gradient(180deg, #3f1a28 0%, #301420 45%, #220d16 100%)";
         }
     }
 
-    if (tipoDominante === "Fogo") {
-    cardTipo.style.borderColor = "#ff6b35";
-    cardTipo.style.background = "radial-gradient(circle at right, rgba(255, 107, 53, 0.25), transparent 70%), linear-gradient(180deg, #3f1c10 0%, #301610 45%, #221009 100%)";
-    } else if (tipoDominante === "Água") {
-        cardTipo.style.borderColor = "#64a0ff";
-        cardTipo.style.background = "radial-gradient(circle at right, rgba(100, 160, 255, 0.25), transparent 70%), linear-gradient(180deg, #10233f 0%, #101b30 45%, #091322 100%)";
-
-    } else if (tipoDominante === "Planta") {
-        cardTipo.style.borderColor = "#4CAF50";
-        cardTipo.style.background = "radial-gradient(circle at right, rgba(76, 175, 80, 0.25), transparent 70%), linear-gradient(180deg, #103f18 0%, #103016 45%, #09220f 100%)";
-
-    } else if (tipoDominante === "Elétrico") {
-        cardTipo.style.borderColor = "#ffcb05";
-        cardTipo.style.background = "radial-gradient(circle at right, rgba(255, 203, 5, 0.25), transparent 70%), linear-gradient(180deg, #3f3510 0%, #302810 45%, #221d09 100%)";
-
-    } else if (tipoDominante === "Psíquico") {
-        cardTipo.style.borderColor = "#ff69b4";
-        cardTipo.style.background = "radial-gradient(circle at right, rgba(255, 105, 180, 0.25), transparent 70%), linear-gradient(180deg, #3f1028 0%, #301020 45%, #220916 100%)";
-
-    } else if (tipoDominante === "Pedra") {
-        cardTipo.style.borderColor = "#b8a038";
-        cardTipo.style.background = "radial-gradient(circle at right, rgba(184, 160, 56, 0.25), transparent 70%), linear-gradient(180deg, #3a3210 0%, #2c2610 45%, #1f1b09 100%)";
-
-    } else if (tipoDominante === "Fantasma") {
-        cardTipo.style.borderColor = "#705898";
-        cardTipo.style.background = "radial-gradient(circle at right, rgba(112, 88, 152, 0.25), transparent 70%), linear-gradient(180deg, #22103f 0%, #1b1030 45%, #130922 100%)";
-
-    } else if (tipoDominante === "Veneno") {
-        cardTipo.style.borderColor = "#a040a0";
-        cardTipo.style.background = "radial-gradient(circle at right, rgba(160, 64, 160, 0.25), transparent 70%), linear-gradient(180deg, #32103f 0%, #261030 45%, #1b0922 100%)";
-
-    } else if (tipoDominante === "Terra") {
-        cardTipo.style.borderColor = "#e0c068";
-        cardTipo.style.background = "radial-gradient(circle at right, rgba(224, 192, 104, 0.25), transparent 70%), linear-gradient(180deg, #3f2f10 0%, #302410 45%, #221909 100%)";
-
-    } else if (tipoDominante === "Voador") {
-        cardTipo.style.borderColor = "#98d8d8";
-        cardTipo.style.background = "radial-gradient(circle at right, rgba(152, 216, 216, 0.25), transparent 70%), linear-gradient(180deg, #10353f 0%, #102930 45%, #091d22 100%)";
-
-    } else if (tipoDominante === "Inseto") {
-        cardTipo.style.borderColor = "#a8b820";
-        cardTipo.style.background = "radial-gradient(circle at right, rgba(168, 184, 32, 0.25), transparent 70%), linear-gradient(180deg, #313f10 0%, #263010 45%, #1b2209 100%)";
-
-    } else if (tipoDominante === "Normal") {
-        cardTipo.style.borderColor = "#a8a878";
-        cardTipo.style.background = "radial-gradient(circle at right, rgba(168, 168, 120, 0.25), transparent 70%), linear-gradient(180deg, #303018 0%, #252512 45%, #1a1a0c 100%)";
-
-    } else if (tipoDominante === "Lutador") {
-        cardTipo.style.borderColor = "#c03028";
-        cardTipo.style.background = "radial-gradient(circle at right, rgba(192, 48, 40, 0.25), transparent 70%), linear-gradient(180deg, #3f1410 0%, #301010 45%, #220909 100%)";
-
-    } else if (tipoDominante === "Gelo") {
-        cardTipo.style.borderColor = "#98d8d8";
-        cardTipo.style.background = "radial-gradient(circle at right, rgba(152, 216, 216, 0.25), transparent 70%), linear-gradient(180deg, #103a3f 0%, #102d30 45%, #091f22 100%)";
-
-    } else if (tipoDominante === "Dragão") {
-        cardTipo.style.borderColor = "#7038f8";
-        cardTipo.style.background = "radial-gradient(circle at right, rgba(112, 56, 248, 0.25), transparent 70%), linear-gradient(180deg, #1d103f 0%, #171030 45%, #100922 100%)";
-
-    } else if (tipoDominante === "Fada") {
-        cardTipo.style.borderColor = "#ee99ac";
-        cardTipo.style.background = "radial-gradient(circle at right, rgba(238, 153, 172, 0.25), transparent 70%), linear-gradient(180deg, #3f1a28 0%, #301420 45%, #220d16 100%)";
-    }
-}
-
+    // Conta quantos pokémons de cada tipo existem no time
     function contarTipos(pokemons) {
         var contagem = {};
         pokemons.forEach(function(pokemon) {
+            // se o tipo já existe na contagem, incrementa
             if (contagem[pokemon.tipo]) {
                 contagem[pokemon.tipo]++;
             } else {
@@ -355,9 +375,11 @@ function colorirCardTipo(contagem) {
         return contagem;
     }
 
+    // Monta o gráfico de radar com os tipos do time
+    // Cada eixo representa um tipo e o valor é a quantidade de pokémons daquele tipo
     function plotarGraficoRadar(contagem) {
-        var tipos = Object.keys(contagem);
-        var quantidades = Object.values(contagem);
+        var tipos = Object.keys(contagem);       // ex: ["Fogo", "Água", "Planta"]
+        var quantidades = Object.values(contagem); // ex: [2, 1, 1]
 
         new Chart(document.getElementById("graficoTipos"), {
             type: "radar",
@@ -401,152 +423,168 @@ function colorirCardTipo(contagem) {
         });
     }
 
-    function registrarHistorico() {
-    fetch(`/dashboard/dados/${sessionStorage.ID_USUARIO}`)
-        .then(function(resposta) {
-            return resposta.json();
-        })
-        .then(function(dados) {
-            fetch("/dashboard/historico/registrar", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    idUsuario: sessionStorage.ID_USUARIO,
-                    porcentagem: dados.conclusao_geral
-                })
-            }) 
+    // ─── HISTÓRICO ───────────────────────────────────────────────────────
+
+    // O gráfico de histórico é construído com três funções
+    // obterDadosHistorico traz os últimos 5 dias de progresso do banco
+    // plotarGraficoHistorico monta o gráfico de linha com os dados trazidos
+    // atualizarGraficoHistorico verifica a cada 5 segundos se há novo dia registrado
+
+    // A função obterDadosHistorico também invoca a função plotarGraficoHistorico
+    function obterDadosHistorico() {
+        var idUsuario = sessionStorage.ID_USUARIO;
+
+        fetch(`/dashboard/historico/${idUsuario}`, { cache: 'no-store' })
             .then(function(resposta) {
-                console.log("Histórico registrado:", resposta.status);
+                if (resposta.ok) {
+                    resposta.json().then(function(registros) {
+                        console.log(`Dados recebidos: ${JSON.stringify(registros)}`);
+
+                        // pega só os últimos 5 dias
+                        var ultimos5 = registros.slice(-5);
+
+                        // se tiver menos de 5 dias, preenche o início com dias vazios
+                        while (ultimos5.length < 5) {
+                            ultimos5.unshift({ data_registro: "-", porcentagem: 0 });
+                        }
+
+                        plotarGraficoHistorico(ultimos5);
+                    });
+                } else {
+                    console.error('Nenhum dado encontrado ou erro na API');
+                }
             })
             .catch(function(erro) {
-                console.log(erro);
+                console.error(`Erro na obtenção do histórico: ${erro.message}`);
             });
-        })
-        .catch(function(erro) {
-            console.log(erro);
-        });
-}
+    }
 
-function obterDadosHistorico() {
-    var idUsuario = sessionStorage.ID_USUARIO;
+    function plotarGraficoHistorico(registros) {
+        console.log('Iniciando plotagem do gráfico de histórico...');
 
-    fetch(`/dashboard/historico/${idUsuario}`)
-        .then(function(resposta) {
-            return resposta.json();
-        })
-        .then(function(registros) {
-            var ultimos5 = registros.slice(-5);
-
-            while (ultimos5.length < 5) {
-                ultimos5.unshift({ data_registro: "-", porcentagem: 0 });
+        // formata as datas para exibir só os 10 primeiros caracteres (YYYY-MM-DD)
+        // se não tiver data, exibe "-"
+        var labels = registros.map(function(r) {
+            if (r.data_registro === "-") {
+                return "-";
+            } else {
+                return r.data_registro.substring(0, 10);
             }
-
-            plotarGraficoHistorico(ultimos5);
-        })
-        .catch(function(erro) {
-            console.log(erro);
         });
-}
 
-function plotarGraficoHistorico(registros) {
-    var labels = registros.map(function(r) {
-        if (r.data_registro === "-") {
-            return "-";
-        } else {
-            return r.data_registro.substring(0, 10);
-        }
-    });
-    
-    var dados = registros.map(function(r) { return r.porcentagem; });
+        // extrai só as porcentagens para o eixo Y
+        var dados = registros.map(function(r) { return r.porcentagem; });
 
-    var estruturaDados = {
-        labels: labels,
-        datasets: [{
-            label: "Progresso geral por dia",
-            data: dados,
-            borderColor: "#ffcb05",
-            pointBackgroundColor: "#ffcb05"
-        }]
-    };
+        // estrutura de dados que usa para montar o gráfico é guardada em variável para ser atualizada depois em *atualizarGraficoHistorico*
+        var estruturaDados = {
+            labels: labels,
+            datasets: [{
+                label: "Progresso geral por dia",
+                data: dados,
+                borderColor: "#ffcb05",
+                pointBackgroundColor: "#ffcb05"
+            }]
+        };
 
-    var grafico = new Chart(document.getElementById("graficoHistorico"), {
-        type: "line",
-        data: estruturaDados,
-        options: {
-            plugins: {
-                legend: {
-                    labels: {
-                        color: "#ffffff",
-                        font: { size: 18 }
-                    }
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    max: 100,
-                    ticks: {
-                        color: "#ffffff",
-                        font: { size: 15 },
-                        callback: function(valor) {
-                            return valor + "%";
+        console.log('O gráfico será plotado com os respectivos valores:');
+        console.log('Labels:', labels);
+        console.log('Dados:', dados);
+
+        // cria e renderiza o gráfico na página
+        var grafico = new Chart(document.getElementById("graficoHistorico"), {
+            type: "line",
+            data: estruturaDados,
+            options: {
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: "#ffffff",
+                            font: { size: 18 }
                         }
-                    },
-                    grid: {
-                        color: "rgba(255, 255, 255, 0.1)"
                     }
                 },
-                x: {
-                    ticks: {
-                        color: "#ffffff",
-                        font: { size: 15 }
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            color: "#ffffff",
+                            font: { size: 15 },
+                            callback: function(valor) {
+                                return valor + "%";
+                            }
+                        },
+                        grid: {
+                            color: "rgba(255, 255, 255, 0.1)"
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: "#ffffff",
+                            font: { size: 15 }
+                        }
                     }
                 }
             }
-        }
-    });
-
-    setTimeout(function() {
-        atualizarGraficoHistorico(estruturaDados, grafico);
-    }, 5000);
-}
-
-function atualizarGraficoHistorico(estruturaDados, grafico) {
-    var idUsuario = sessionStorage.ID_USUARIO;
-
-    fetch(`/dashboard/historico/${idUsuario}`)
-        .then(function(resposta) {
-            return resposta.json();
-        })
-        .then(function(registros) {
-            var ultimos5 = registros.slice(-5);
-
-            while (ultimos5.length < 5) {
-                ultimos5.unshift({ data_registro: "-", porcentagem: 0 });
-            }
-
-            var novaLabel;
-            if (ultimos5[4].data_registro === "-") {
-                novaLabel = "-";
-            } else {
-                novaLabel = ultimos5[4].data_registro.substring(0, 10);
-            }
-            var novoValor = ultimos5[4].porcentagem;
-
-            if (novaLabel !== estruturaDados.labels[estruturaDados.labels.length - 1]) {
-                estruturaDados.labels.shift();
-                estruturaDados.labels.push(novaLabel);
-                estruturaDados.datasets[0].data.shift();
-                estruturaDados.datasets[0].data.push(novoValor);
-                grafico.update();
-            }
-
-            setTimeout(function() {
-                atualizarGraficoHistorico(estruturaDados, grafico);
-            }, 5000);
-        })
-        .catch(function(erro) {
-            console.log(erro);
         });
-}
+
+        // aguarda 10 segundos e verifica se há novo dia registrado
+        setTimeout(function() {
+            atualizarGraficoHistorico(estruturaDados, grafico);
+        }, 10000);
+    }
+
+    // Essa função  verifica a cada 5 segundos se tem um novo dia de progresso registrado no banco se tiver remove o dia mais antigo e adiciona o novo
+    function atualizarGraficoHistorico(estruturaDados, grafico) {
+        var idUsuario = sessionStorage.ID_USUARIO;
+
+        fetch(`/dashboard/historico/${idUsuario}`, { cache: 'no-store' })
+            .then(function(resposta) {
+                if (resposta.ok) {
+                    resposta.json().then(function(registros) {
+                        console.log(`Dados recebidos: ${JSON.stringify(registros)}`);
+
+                        var ultimos5 = registros.slice(-5);
+
+                        while (ultimos5.length < 5) {
+                            ultimos5.unshift({ data_registro: "-", porcentagem: 0 });
+                        }
+
+                        // formata a data do registro mais recente
+                        var novaLabel;
+                        if (ultimos5[4].data_registro === "-") {
+                            novaLabel = "-";
+                        } else {
+                            novaLabel = ultimos5[4].data_registro.substring(0, 10);
+                        }
+                        var novoValor = ultimos5[4].porcentagem;
+
+                        // só atualiza o gráfico se o último dia for diferente do que já está
+                        if (novaLabel !== estruturaDados.labels[estruturaDados.labels.length - 1]) {
+                            estruturaDados.labels.shift(); // remove o dia mais antigo
+                            estruturaDados.labels.push(novaLabel); // adiciona o novo dia
+
+                            estruturaDados.datasets[0].data.shift(); // remove o valor mais antigo
+                            estruturaDados.datasets[0].data.push(novoValor); // adiciona o novo valor
+
+                            grafico.update(); // refaz o gráfico com os novos dados
+                        }
+
+                        // próxima verificação para daqui 5 segundos
+                        setTimeout(function() {
+                            atualizarGraficoHistorico(estruturaDados, grafico);
+                        }, 10000);
+                    });
+                } else {
+                    console.error('Nenhum dado encontrado ou erro na API');
+                    // mesmo com erro, continua tentando a cada 5 segundos
+                    setTimeout(function() {
+                        atualizarGraficoHistorico(estruturaDados, grafico);
+                    }, 10000);
+                }
+            })
+            .catch(function(erro) {
+                console.error(`Erro na atualização do histórico: ${erro.message}`);
+            });
+    }
 </script>

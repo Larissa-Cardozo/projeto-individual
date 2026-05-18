@@ -130,9 +130,7 @@ p,span,a {
 
 .card-p {
     width: 360px;
-
     padding: 28px;
-
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -174,7 +172,7 @@ p,span,a {
     gap: 20px;
 }
 
-.painel {
+.painel{
     height: 400px;
     width: 100%;
     padding: 26px;
